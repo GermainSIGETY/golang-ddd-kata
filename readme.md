@@ -10,7 +10,7 @@ Project applies DDD concepts :
 
 ## Article
 
-Please read ######TODO
+Please read https://medium.com/@gsigety/domain-driven-design-golang-kata-1-d76d01459806
 
 ## Architecture
 
