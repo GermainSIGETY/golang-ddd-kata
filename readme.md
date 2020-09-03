@@ -102,6 +102,20 @@ curl -i -X GET http://localhost:8080/todos/1
 curl -X GET http://localhost:8080/todos
 ```
 
+## Swagger / OpenAPI
+### Install Swaggo / swag
+```
+go get -u github.com/swaggo/swag/cmd/swag
+```
+### Generate doc 
+```
+make swagger
+```
+
+Doc is generated/updated into ./doc directtory
+
+See https://github.com/swaggo/swag
+
 ## Bibliography
 
 **Hexagonal architecture :**

@@ -12,7 +12,6 @@ import "github.com/GermainSIGETY/golang-ddd-kata/GetThingsDone-app/app"
 // @license.url http://www.apache.org/licenses/LICENSE-2.0.html
 
 // @host localhost
-// @BasePath /todos
 func main() {
 	app.LaunchApp()
 }

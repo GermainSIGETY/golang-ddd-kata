@@ -7,6 +7,13 @@ import (
 	"strconv"
 )
 
+// @Summary Delete a todo
+// @Description Delete a todo from its id
+// @Produce json
+// @Param id path int true "Todo ID"
+// @Success 204
+// @Failure 500 {object} ErrorsArrayJsonResponse
+// @Router /todos/{id} [delete]
 func HandleDelete(context *gin.Context, IDAsString string, api api.TodosAPI) {
 	ID, err := strconv.Atoi(IDAsString)
 	if err != nil {
