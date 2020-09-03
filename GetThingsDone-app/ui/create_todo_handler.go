@@ -9,15 +9,24 @@ import (
 )
 
 type TodoCreationJSONRequest struct {
-	Title       *string `json:"title"`
+	Title       *string `json:"title" validate:"required"`
 	Description *string `json:"description"`
-	DueDate     *int64  `json:"dueDate"`
+	DueDate     *int64  `json:"dueDate" validate:"required"`
 }
 
 type TodoCreationJSONResponse struct {
 	ID int `json:"id"`
 }
 
+// @Summary Create a todo
+// @Description Create a todo
+// @Accept  json
+// @Produce  json
+// @Param todo body TodoCreationJSONRequest true "todo fields"
+// @Success 200 {object} TodoCreationJSONResponse
+// @Failure 500 {object} ErrorsArrayJsonResponse
+// @Failure 422 {object} ErrorsArrayJsonResponse
+// @Router /todos [post]
 func HandleCreate(context *gin.Context, api api.TodosAPI) {
 	var jsonRequest TodoCreationJSONRequest
 	if errs := context.ShouldBindJSON(&jsonRequest); errs != nil {

@@ -20,3 +20,6 @@ test-infra: test-domain
 
 test-domain:
 	@cd GetThingsDone-todo-domain && go test ./...
+
+swagger:
+	@swag init -d ./GetThingsDone-app
