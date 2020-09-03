@@ -17,6 +17,14 @@ type TodoReadJSONResponse struct {
 	DueDate      int64   `json:"dueDate"`
 }
 
+// HandleReadTodo godoc
+// @Summary Read todos
+// @Description Read all todos
+// @Tags todos
+// @Produce  json
+// @Success 200 {object} TodoReadJSONResponse
+// @Failure 500 {object} ErrorsArrayJsonResponse
+// @Router /todos [get]
 func HandleReadTodo(context *gin.Context, IDAsString string, api api.TodosAPI) {
 	ID, err := strconv.Atoi(IDAsString)
 	if err != nil {
