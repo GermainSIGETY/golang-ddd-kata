@@ -18,14 +18,17 @@ type TodoCreationJSONResponse struct {
 	ID int `json:"id"`
 }
 
+// HandleCreate godoc
 // @Summary Create a todo
-// @Description Create a todo
-// @Accept  json
-// @Produce  json
-// @Param todo body TodoCreationJSONRequest true "todo fields"
+// @Description Create a new todo
+// @id create-todo
+// @Tags todos
+// @Accept json
+// @Produce json
+// @Param body body TodoCreationJSONRequest true "todo infos"
 // @Success 200 {object} TodoCreationJSONResponse
-// @Failure 500 {object} ErrorsArrayJsonResponse
 // @Failure 422 {object} ErrorsArrayJsonResponse
+// @Failure 500 {object} ErrorsArrayJsonResponse
 // @Router /todos [post]
 func HandleCreate(context *gin.Context, api api.TodosAPI) {
 	var jsonRequest TodoCreationJSONRequest

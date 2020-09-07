@@ -15,15 +15,17 @@ type TodoUpdateJSONRequest struct {
 	DueDate     *int64  `json:"dueDate" validate:"required"`
 }
 
+// HandleUpdate godoc
 // @Summary Update a todo
-// @Description Update a todo fromits id
+// @Description Update a todo by its Id
+// @id update-todo
+// @Tags todos
 // @Accept json
-// @Produce json
 // @Param id path int true "Todo ID"
-// @Param todo body TodoUpdateJSONRequest true "todo fields"
-// @Success 204
-// @Failure 500 {object} ErrorsArrayJsonResponse
+// @Param body body TodoCreationJSONRequest true "todo infos"
+// @Success 204 ""
 // @Failure 422 {object} ErrorsArrayJsonResponse
+// @Failure 500 {object} ErrorsArrayJsonResponse
 // @Router /todos/{id} [put]
 func HandleUpdate(context *gin.Context, IDAsString string, api api.TodosAPI) {
 	ID, err := strconv.Atoi(IDAsString)
