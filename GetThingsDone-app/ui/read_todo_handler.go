@@ -17,11 +17,15 @@ type TodoReadJSONResponse struct {
 	DueDate      int64   `json:"dueDate"`
 }
 
+// HandleReadTodo godoc
 // @Summary Read a todo
-// @Description Read a todo from its id
-// @Produce  json
+// @Description Read a todo by its Id
+// @id read-todo
+// @Tags todos
+// @Produce json
 // @Param id path int true "Todo ID"
 // @Success 200 {object} TodoReadJSONResponse
+// @Failure 404 {object} ErrorsArrayJsonResponse
 // @Failure 500 {object} ErrorsArrayJsonResponse
 // @Router /todos/{id} [get]
 func HandleReadTodo(context *gin.Context, IDAsString string, api api.TodosAPI) {

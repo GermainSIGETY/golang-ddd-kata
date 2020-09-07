@@ -7,11 +7,15 @@ import (
 	"strconv"
 )
 
+// HandleDelete godoc
 // @Summary Delete a todo
-// @Description Delete a todo from its id
+// @Description Delete a todo by its Id
+// @id delete-todo
+// @Tags todos
 // @Produce json
 // @Param id path int true "Todo ID"
-// @Success 204
+// @Success 204 ""
+// @Failure 422 {object} ErrorsArrayJsonResponse
 // @Failure 500 {object} ErrorsArrayJsonResponse
 // @Router /todos/{id} [delete]
 func HandleDelete(context *gin.Context, IDAsString string, api api.TodosAPI) {
