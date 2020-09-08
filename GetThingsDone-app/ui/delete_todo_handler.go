@@ -14,7 +14,7 @@ import (
 // @Tags todos
 // @Produce json
 // @Param id path int true "Todo ID"
-// @Success 204 ""
+// @Success 204 "it's ok"
 // @Failure 422 {object} ErrorsArrayJsonResponse
 // @Failure 500 {object} ErrorsArrayJsonResponse
 // @Router /todos/{id} [delete]

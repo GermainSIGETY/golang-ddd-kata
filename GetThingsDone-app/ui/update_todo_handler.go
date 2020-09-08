@@ -23,7 +23,7 @@ type TodoUpdateJSONRequest struct {
 // @Accept json
 // @Param id path int true "Todo ID"
 // @Param body body TodoCreationJSONRequest true "todo infos"
-// @Success 204 ""
+// @Success 204 "it's ok"
 // @Failure 422 {object} ErrorsArrayJsonResponse
 // @Failure 500 {object} ErrorsArrayJsonResponse
 // @Router /todos/{id} [put]
