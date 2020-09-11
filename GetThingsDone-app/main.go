@@ -1,6 +1,8 @@
 package main
 
-import "github.com/GermainSIGETY/golang-ddd-kata/GetThingsDone-app/app"
+import (
+	"github.com/GermainSIGETY/golang-ddd-kata/GetThingsDone-app/app"
+)
 
 // @title Get Things Done Todos Rest API
 // @version 1.0

@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/GermainSIGETY/golang-ddd-kata/GetThingsDone-app/ui"
+	"github.com/GermainSIGETY/golang-ddd-kata/GetThingsDone-app/ui/http/todo"
 	"net/http"
 	"strconv"
 )
@@ -12,7 +12,7 @@ import (
 func (world *TodoWorld) UserUpdatesPreviouslyCreatedTodoWithTitleDescriptionAndDueDate(title, description, dueDateAsString string) error {
 	_, dueDate := stringToDate(dueDateAsString)
 
-	jsonRequest := ui.TodoUpdateJSONRequest{Title: &title, Description: &description, DueDate: &dueDate}
+	jsonRequest := todo.TodoUpdateJSONRequest{Title: &title, Description: &description, DueDate: &dueDate}
 
 	resp, err := callHttpPut(world.todoID, jsonRequest)
 	if err != nil {
@@ -28,7 +28,7 @@ func (world *TodoWorld) UserUpdatesTodoWithID(ID int) error {
 	description := "toto"
 	var dueDate int64 = 1234
 
-	jsonRequest := ui.TodoUpdateJSONRequest{Title: &title, Description: &description, DueDate: &dueDate}
+	jsonRequest := todo.TodoUpdateJSONRequest{Title: &title, Description: &description, DueDate: &dueDate}
 	resp, err := callHttpPut(ID, jsonRequest)
 	if err != nil {
 		return fmt.Errorf("error on PUT todo %v", err)
@@ -37,7 +37,7 @@ func (world *TodoWorld) UserUpdatesTodoWithID(ID int) error {
 	return nil
 }
 
-func callHttpPut(ID int, jsonRequest ui.TodoUpdateJSONRequest) (*http.Response, error) {
+func callHttpPut(ID int, jsonRequest todo.TodoUpdateJSONRequest) (*http.Response, error) {
 	requestBody, _ := json.Marshal(jsonRequest)
 
 	client := &http.Client{}

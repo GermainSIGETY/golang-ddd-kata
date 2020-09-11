@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/GermainSIGETY/golang-ddd-kata/GetThingsDone-app/ui"
+	"github.com/GermainSIGETY/golang-ddd-kata/GetThingsDone-app/ui/http/todo"
 	"io/ioutil"
 	"net/http"
 	"strconv"
@@ -14,11 +14,11 @@ func (world *TodoWorld) ATodoWithTitleADescriptionAndADueDate(title, description
 
 	_, dueDate := stringToDate(date)
 
-	req := ui.TodoCreationJSONRequest{Title: &title, Description: &description, DueDate: &dueDate}
+	req := todo.TodoCreationJSONRequest{Title: &title, Description: &description, DueDate: &dueDate}
 
 	body, _ := json.Marshal(req)
 
-	res, errPost := http.Post(serverURL, ui.JSONContentType, bytes.NewBuffer(body))
+	res, errPost := http.Post(serverURL, todo.JSONContentType, bytes.NewBuffer(body))
 	if errPost != nil {
 		return fmt.Errorf("error on POST todo %v", errPost)
 	}
@@ -32,7 +32,7 @@ func (world *TodoWorld) ATodoWithTitleADescriptionAndADueDate(title, description
 		return fmt.Errorf("error reading body : %v", errReadBody)
 	}
 
-	var jsonAnswer ui.TodoCreationJSONResponse
+	var jsonAnswer todo.TodoCreationJSONResponse
 	err = json.Unmarshal(answer, &jsonAnswer)
 	if err != nil {
 		return fmt.Errorf("error deserializing body : %v", err)
@@ -58,7 +58,7 @@ func (world *TodoWorld) UserReadPreviouslyCreatedTodo() error {
 		return fmt.Errorf("error reading body : %v", errReadBody)
 	}
 
-	var jsonAnswer ui.TodoReadJSONResponse
+	var jsonAnswer todo.TodoReadJSONResponse
 	errUnmarshall := json.Unmarshal(answer, &jsonAnswer)
 	if errUnmarshall != nil {
 		return fmt.Errorf("error deserializing body : %v", errUnmarshall)

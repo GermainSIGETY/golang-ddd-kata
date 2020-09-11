@@ -35,7 +35,7 @@ func (suite *InfraTestSuite) SetupSuite() {
 
 func (suite *InfraTestSuite) TearDownSuite() {
 	fmt.Println("Tear down suite")
-	suite.repo.db.DropTableIfExists(&TodoGORM{})
+	suite.repo.db.DropTableIfExists(&todoGORM{})
 	suite.repo.db.Close()
 }
 
@@ -114,7 +114,7 @@ func (suite *InfraTestSuite) TestCreateAndUpdate() {
 
 func (suite *InfraTestSuite) TestReadSummaries() {
 
-	suite.repo.db.Delete(&TodoGORM{})
+	suite.repo.db.Delete(&todoGORM{})
 	toCreate := domain.NewTodo(nil, toCreateAndUpdateTitle, &toCreateAndUpdateDescription, toCreateCreationDate, toCreateDueDate)
 	id1, err := suite.repo.Create(toCreate)
 	suite.NoError(err, "error creating Todo")

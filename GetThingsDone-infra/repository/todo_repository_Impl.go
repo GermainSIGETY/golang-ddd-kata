@@ -25,14 +25,14 @@ func (repository *TodosRepository) InitDatabase(dialect string, URL string, drop
 		return err
 	}
 	if drop {
-		repository.db.DropTableIfExists(&TodoGORM{})
+		repository.db.DropTableIfExists(&todoGORM{})
 	}
-	repository.db.AutoMigrate(&TodoGORM{})
+	repository.db.AutoMigrate(&todoGORM{})
 	return nil
 }
 
 func (repository TodosRepository) ReadTodoList() ([]presentation.TodoSummaryResponse, error) {
-	var todos []TodoGORM
+	var todos []todoGORM
 	err := repository.db.Select("ID, title, due_date").Find(&todos).Error
 	if err != nil {
 		return nil, err
@@ -40,7 +40,7 @@ func (repository TodosRepository) ReadTodoList() ([]presentation.TodoSummaryResp
 	return mapToTodoSummaryResponse(todos), nil
 }
 
-func mapToTodoSummaryResponse(todos []TodoGORM) []presentation.TodoSummaryResponse {
+func mapToTodoSummaryResponse(todos []todoGORM) []presentation.TodoSummaryResponse {
 	var summaries = make([]presentation.TodoSummaryResponse, len(todos))
 	for i, todo := range todos {
 		summaries[i] = presentation.NewTodoSummaryResponse(*todo.ID, todo.Title, todo.DueDate)
@@ -49,7 +49,7 @@ func mapToTodoSummaryResponse(todos []TodoGORM) []presentation.TodoSummaryRespon
 }
 
 func (repository TodosRepository) ReadTodo(ID int) (domain.Todo, error) {
-	var todoGORM TodoGORM
+	var todoGORM todoGORM
 	err := repository.db.First(&todoGORM, ID).Error
 	if err != nil {
 		return handleReadError(err)
@@ -84,7 +84,7 @@ func (repository TodosRepository) UpdateTodo(todo domain.Todo) error {
 }
 
 func (repository TodosRepository) DeleteTodo(ID int) error {
-	todoGORM := TodoGORM{ID: &ID}
+	todoGORM := todoGORM{ID: &ID}
 	db := repository.db.Delete(&todoGORM)
 	switch {
 	case db.Error != nil:

@@ -3,7 +3,7 @@ package steps
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/GermainSIGETY/golang-ddd-kata/GetThingsDone-app/ui"
+	"github.com/GermainSIGETY/golang-ddd-kata/GetThingsDone-app/ui/http/todo"
 	"io/ioutil"
 	"net/http"
 )
@@ -25,7 +25,7 @@ func (world *TodoWorld) UserReadsTodoList() error {
 		return fmt.Errorf("error reading body : %v", errReadBody)
 	}
 
-	var jsonAnswer ui.TodoListJSONResponse
+	var jsonAnswer todo.TodoListJSONResponse
 	errUnmarshall := json.Unmarshal(answer, &jsonAnswer)
 	if errUnmarshall != nil {
 		return fmt.Errorf("error deserializing body : %v", errUnmarshall)

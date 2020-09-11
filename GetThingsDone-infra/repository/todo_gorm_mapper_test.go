@@ -39,7 +39,7 @@ func TestFromTodoWithNilValues(t *testing.T) {
 }
 
 func TestFromTodoGORM(t *testing.T) {
-	todoGORM := TodoGORM{&id, title, &description, creationDate, dueDate}
+	todoGORM := todoGORM{&id, title, &description, creationDate, dueDate}
 
 	todo := FromTodoGORM(todoGORM)
 
@@ -52,7 +52,7 @@ func TestFromTodoGORM(t *testing.T) {
 }
 
 func TestFromTodoGORMWithNilvalues(t *testing.T) {
-	todoGORM := TodoGORM{Title: title, CreationDate: creationDate, DueDate: dueDate}
+	todoGORM := todoGORM{Title: title, CreationDate: creationDate, DueDate: dueDate}
 
 	todo := FromTodoGORM(todoGORM)
 

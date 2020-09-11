@@ -4,7 +4,7 @@ import (
 	"time"
 )
 
-type TodoGORM struct {
+type todoGORM struct {
 	ID           *int      `gorm:"primary_key"`
 	Title        string    `gorm:"Column:title;size:255"`
 	Description  *string   `gorm:"Column:description;size:255"`
@@ -12,6 +12,6 @@ type TodoGORM struct {
 	DueDate      time.Time `gorm:"Column:due_date"`
 }
 
-func (TodoGORM) TableName() string {
+func (todoGORM) TableName() string {
 	return "Todo"
 }

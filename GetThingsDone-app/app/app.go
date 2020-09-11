@@ -1,7 +1,7 @@
 package app
 
 import (
-	"github.com/GermainSIGETY/golang-ddd-kata/GetThingsDone-app/ui"
+	"github.com/GermainSIGETY/golang-ddd-kata/GetThingsDone-app/ui/http"
 	"github.com/GermainSIGETY/golang-ddd-kata/GetThingsDone-infra/repository"
 	"github.com/GermainSIGETY/golang-ddd-kata/GetThingsDone-todo-domain/api"
 )
@@ -24,5 +24,5 @@ func launchApp(dialect string, url string, drop bool) {
 
 	todosAPI := api.New(&repository)
 
-	ui.NewRouter(todosAPI)
+	http.NewRouter(todosAPI)
 }

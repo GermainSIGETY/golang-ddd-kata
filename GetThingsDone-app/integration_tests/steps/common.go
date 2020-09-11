@@ -2,7 +2,7 @@ package steps
 
 import (
 	"fmt"
-	"github.com/GermainSIGETY/golang-ddd-kata/GetThingsDone-app/ui"
+	"github.com/GermainSIGETY/golang-ddd-kata/GetThingsDone-app/ui/http/todo"
 	"time"
 )
 
@@ -17,7 +17,7 @@ type TodoWorld struct {
 	description   string
 	dueDate       int64
 	statusCode    int
-	todoSummaries []ui.TodoSummaryJSONResponse
+	todoSummaries []todo.TodoSummaryJSONResponse
 }
 
 func stringToDate(date string) (error, int64) {

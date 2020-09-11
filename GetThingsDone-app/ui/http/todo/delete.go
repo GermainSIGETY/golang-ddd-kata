@@ -1,4 +1,4 @@
-package ui
+package todo
 
 import (
 	"github.com/GermainSIGETY/golang-ddd-kata/GetThingsDone-todo-domain/api"
