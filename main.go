@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/GermainSIGETY/golang-ddd-kata/src/app"
+	"github.com/GermainSIGETY/golang-ddd-kata/internal/bootstrap"
 )
 
 // @title Get Things Done Todos Rest API
@@ -15,5 +15,5 @@ import (
 
 // @host localhost
 func main() {
-	app.LaunchApp()
+	bootstrap.LaunchApp()
 }

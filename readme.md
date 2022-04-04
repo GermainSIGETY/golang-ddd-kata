@@ -14,9 +14,10 @@ Please read https://medium.com/@gsigety/domain-driven-design-golang-kata-1-d76d0
 
 ## Architecture
 
-Go modules, responsibilities, dependencies
+project layout applies Golang's Standard project layout
+https://github.com/golang-standards/project-layout
 
-### GetThingsDone-todo-domain
+### internal/domain
 
 **The hexagon**
 - contains all business logic; validation rules of users inputs ; mandatory information for a Todo, format of fields and so on => it validates invariants of value objects entering into the system
@@ -25,7 +26,7 @@ Go modules, responsibilities, dependencies
 
 **dependencies :** (almost) Nothing. Your domain is not coupled with any web framework nor persistence/infrastructure Framework.
 
-### GetThingsDone-infra
+### internal/infrastructure
 
 **Infrastructure layer**
 - contains implementation of means for hexagon to communicate with the outside world
@@ -33,16 +34,23 @@ Go modules, responsibilities, dependencies
 
 But it could be many others responsibilities ; sending email, SMS, push notification, read configuration info etc.
 
-**dependencies** : GetThingsDone-domain, and many Golang persistence libraries stuff : GORM, SQL drivers etc.
+**dependencies** : domain, and some Golang stuff for persistence : GORM, SQL drivers etc.
 
-### GetThingsDone-app
+### internal/ui  
 
 **UI and final runnable artifact**
 - contains Go main class : entry point to launch the whole stuff
 - user interface : user interface is a HTTP Rest/JSON API, but it could be html pages, CLI, gRPC etc.
 - application packaging : an executable file
 
-**dependencies** : GetThingsDone-domain, GetThingsDone-infra-infra, and Golang stuff for Rest JSON
+**dependencies** : domain, infrastructure, and Golang stuff for http/Rest/JSON
+
+### internal/bootstrap
+
+**Code to initiate and launch API**
+- create the API, repository, http and and so one
+
+**dependencies** : domain, infrastructure and ui
 
 ## Build, run, automated tests
 

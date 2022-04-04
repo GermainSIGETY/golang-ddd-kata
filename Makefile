@@ -14,4 +14,4 @@ tests :
 	go test -v -count=1 ./...
 
 swagger:
-	@swag init -d ./GetThingsDone-app
+	@swag init -d .
