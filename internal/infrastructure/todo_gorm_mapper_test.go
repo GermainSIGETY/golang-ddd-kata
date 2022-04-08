@@ -1,10 +1,11 @@
 package infrastructure
 
 import (
-	"github.com/GermainSIGETY/golang-ddd-kata/internal/domain/todo"
-	"github.com/stretchr/testify/assert"
 	"testing"
 	"time"
+
+	"github.com/GermainSIGETY/golang-ddd-kata/internal/domain/todo/model"
+	"github.com/stretchr/testify/assert"
 )
 
 var (
@@ -17,8 +18,14 @@ var creationDate = time.Date(2013, 3, 1, 12, 30, 0, 0, time.UTC)
 var dueDate = time.Date(2031, 3, 1, 12, 30, 0, 0, time.UTC)
 
 func TestFromTodo(t *testing.T) {
-	todo := todo.NewTodo(id, title, description, creationDate, dueDate)
+	todo := model.Todo{
+		ID: id,
 
+		CreationDate: creationDate,
+		Description:  description,
+		DueDate:      dueDate,
+		Title:        title,
+	}
 	todoGORM := FromTodo(todo)
 
 	assert.Equal(t, id, todoGORM.ID, "The two IDs should be the same.")
@@ -29,7 +36,14 @@ func TestFromTodo(t *testing.T) {
 }
 
 func TestFromTodoWithEmptyValues(t *testing.T) {
-	todo := todo.NewTodo(0, title, "", creationDate, dueDate)
+	todo := model.Todo{
+		ID: 0,
+
+		CreationDate: creationDate,
+		Description:  "",
+		DueDate:      dueDate,
+		Title:        title,
+	}
 
 	todoGORM := FromTodo(todo)
 
@@ -43,11 +57,11 @@ func TestFromTodoGORM(t *testing.T) {
 
 	todo := FromTodoGORM(todoGORM)
 
-	assert.Equal(t, id, todo.ID())
-	assert.Equal(t, title, todo.Title())
-	assert.Equal(t, description, todo.Description())
-	assert.Equal(t, creationDate, todo.CreationDate())
-	assert.Equal(t, dueDate, todo.DueDate())
+	assert.Equal(t, id, todo.ID)
+	assert.Equal(t, title, todo.Title)
+	assert.Equal(t, description, todo.Description)
+	assert.Equal(t, creationDate, todo.CreationDate)
+	assert.Equal(t, dueDate, todo.DueDate)
 }
 
 func TestFromTodoGORMWithEmptyValues(t *testing.T) {
@@ -55,7 +69,7 @@ func TestFromTodoGORMWithEmptyValues(t *testing.T) {
 
 	todo := FromTodoGORM(todoGORM)
 
-	assert.Equal(t, title, todo.Title())
-	assert.Empty(t, todo.ID())
-	assert.Empty(t, todo.Description())
+	assert.Equal(t, title, todo.Title)
+	assert.Empty(t, todo.ID)
+	assert.Empty(t, todo.Description)
 }

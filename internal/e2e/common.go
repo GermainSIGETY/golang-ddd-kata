@@ -2,8 +2,9 @@ package e2e
 
 import (
 	"fmt"
-	"github.com/GermainSIGETY/golang-ddd-kata/internal/ui"
 	"time"
+
+	"github.com/GermainSIGETY/golang-ddd-kata/internal/ui"
 )
 
 const (
@@ -20,10 +21,11 @@ type TodoWorld struct {
 	todoSummaries []ui.TodoSummaryJSONResponse
 }
 
-func stringToDate(date string) (error, int64) {
+// Error is always returned as last argument
+func stringToDate(date string) (int64, error) {
 	t, err := time.Parse(layoutISO, date)
 	dueDate := t.Unix()
-	return err, dueDate
+	return dueDate, err
 }
 
 func (world *TodoWorld) ApplicationAnswersWithStatusCode(statusCode int) (err error) {
@@ -41,7 +43,7 @@ func (world *TodoWorld) TitleIsDescriptionIsAndADueDateIs(title, description str
 	if world.description != description {
 		return fmt.Errorf("error description %v is not %v", world.description, description)
 	}
-	_, date := stringToDate(dueDate)
+	date, _ := stringToDate(dueDate)
 	if world.dueDate != date {
 		return fmt.Errorf("error date %v is not %v", world.dueDate, date)
 	}

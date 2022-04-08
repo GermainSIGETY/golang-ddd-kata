@@ -2,12 +2,14 @@ package infrastructure
 
 import (
 	"errors"
-	"github.com/GermainSIGETY/golang-ddd-kata/internal/domain/todo"
+
+	"github.com/GermainSIGETY/golang-ddd-kata/internal/domain/todo/model"
+	"github.com/GermainSIGETY/golang-ddd-kata/internal/domain/todo/port"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
 
-type TodosRepository struct {
+type todosRepository struct {
 	db *gorm.DB
 }
 
@@ -15,7 +17,13 @@ const (
 	goORMRecordNotFoundError = "record not found"
 )
 
-func (repository *TodosRepository) InitDatabase(URL string, drop bool) error {
+func NewTodosRepository(URL string, drop bool) (port.ITodosRepository, error) {
+	rep := todosRepository{}
+	err := rep.InitDatabase(URL, drop)
+	return rep, err
+}
+
+func (repository *todosRepository) InitDatabase(URL string, drop bool) error {
 	var err error
 
 	dialect2 := sqlite.Open(URL)
@@ -33,7 +41,7 @@ func (repository *TodosRepository) InitDatabase(URL string, drop bool) error {
 	return nil
 }
 
-func (repository TodosRepository) ReadTodoList() ([]todo.SummaryResponse, error) {
+func (repository todosRepository) ReadTodoList() ([]model.ISummaryResponse, error) {
 	var todos []todoGORM
 	err := repository.db.Select("ID, title, due_date").Find(&todos).Error
 	if err != nil {
@@ -42,15 +50,15 @@ func (repository TodosRepository) ReadTodoList() ([]todo.SummaryResponse, error)
 	return mapToTodoSummaryResponse(todos), nil
 }
 
-func mapToTodoSummaryResponse(todos []todoGORM) []todo.SummaryResponse {
-	var summaries = make([]todo.SummaryResponse, len(todos))
+func mapToTodoSummaryResponse(todos []todoGORM) []model.ISummaryResponse {
+	var summaries = make([]model.ISummaryResponse, len(todos))
 	for i, t := range todos {
-		summaries[i] = todo.NewSummaryResponse(t.ID, t.Title, t.DueDate)
+		summaries[i] = model.NewSummaryResponse(t.ID, t.Title, t.DueDate)
 	}
 	return summaries
 }
 
-func (repository TodosRepository) ReadTodo(ID int) (todo.Todo, error) {
+func (repository todosRepository) ReadTodo(ID int) (model.Todo, error) {
 	var todoGORM todoGORM
 	err := repository.db.First(&todoGORM, ID).Error
 	if err != nil {
@@ -59,15 +67,15 @@ func (repository TodosRepository) ReadTodo(ID int) (todo.Todo, error) {
 	return FromTodoGORM(todoGORM), nil
 }
 
-func handleReadError(err error) (todo.Todo, error) {
-	var todo todo.Todo
+func handleReadError(err error) (model.Todo, error) {
+	var todo model.Todo
 	if err.Error() == goORMRecordNotFoundError {
 		return todo, nil
 	}
 	return todo, err
 }
 
-func (repository TodosRepository) Create(todo todo.Todo) (int, error) {
+func (repository todosRepository) Create(todo model.Todo) (int, error) {
 	var todoGORM = FromTodo(todo)
 	db := repository.db.Create(&todoGORM)
 	if db.Error != nil {
@@ -76,7 +84,7 @@ func (repository TodosRepository) Create(todo todo.Todo) (int, error) {
 	return todoGORM.ID, nil
 }
 
-func (repository TodosRepository) UpdateTodo(todo todo.Todo) error {
+func (repository todosRepository) UpdateTodo(todo model.Todo) error {
 	var todoGORM = FromTodo(todo)
 	db := repository.db.Save(&todoGORM)
 	if db.Error != nil {
@@ -85,14 +93,14 @@ func (repository TodosRepository) UpdateTodo(todo todo.Todo) error {
 	return nil
 }
 
-func (repository TodosRepository) DeleteTodo(id int) error {
+func (repository todosRepository) DeleteTodo(id int) error {
 	todoGORM := todoGORM{ID: id}
 	db := repository.db.Delete(&todoGORM)
 	switch {
 	case db.Error != nil:
 		return db.Error
 	case db.RowsAffected == 0:
-		return errors.New(todo.NoRowDeleted)
+		return errors.New(port.NoRowDeleted)
 	default:
 		return nil
 	}

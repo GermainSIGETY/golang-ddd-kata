@@ -1,9 +1,10 @@
 package ui
 
 import (
-	"github.com/GermainSIGETY/golang-ddd-kata/internal/domain/todo"
-	"github.com/gin-gonic/gin"
 	"net/http"
+
+	"github.com/GermainSIGETY/golang-ddd-kata/internal/domain/todo/api"
+	"github.com/gin-gonic/gin"
 )
 
 type TodoListJSONResponse struct {
@@ -25,7 +26,7 @@ type TodoSummaryJSONResponse struct {
 // @Success 200 {object} TodoListJSONResponse
 // @Failure 500 {object} ErrorsArrayJsonResponse
 // @Router /todos [get]
-func HandleReadTodoList(context *gin.Context, api todo.TodosAPI) {
+func HandleReadTodoList(context *gin.Context, api api.TodosAPI) {
 	todos, errs := api.ReadTodoList()
 	if errs != nil {
 		answerError(context, errs)
