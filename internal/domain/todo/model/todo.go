@@ -4,20 +4,23 @@ import (
 	"time"
 )
 
-// Soit transformer cette struct en immutable avec une interface définsissant TOUTES les methodes dispo de l'exterieur sur cette struct ( y compris les "Getters")
-// Soit mettre les champs en externe pour éviter les getters inutiles ( Je préfère cette solution )
+// Todo The entity, which is by nature mutable; domain performs operations on it, compute stuff, change values etc, and in some case store it after operations
 type Todo struct {
-	// ID is an important field so it must be a the top of the struct fields list
+	// ID is an important field. So it must be at the top of the struct fields list
 	ID int
 
-	// Others fields must be sort alphabetically to easly find a field, when we read the code
+	// Others fields must be sort alphabetically to easily find a field, when we read the code
 	CreationDate time.Time
 	Description  string
 	DueDate      time.Time
 	Title        string
 }
 
-// MapToTodoResponse actuellement "inutile" puisque simplement passe plat, mais si l'app grandi, cette fonction et nécessaire pour que le domain soit en accord avec son "contrat" de struct de donnée avec l'ui qui l'utilise
+// MapToTodoResponse is currently overkill because it is strictly identical than Todo Entity
+// but if an entity has:
+//	- kind of internal field
+//  - fields in another format than ui (ui has more ready to serve formats)
+// we should need theses 'responses' struct in order to have a 'struct contract' used by ui, independent from domain (aka shock absorber pattern)
 func (t Todo) MapToTodoResponse() ReadTodoResponse {
 	if t.ID == 0 {
 		return ReadTodoResponse{}

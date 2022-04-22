@@ -9,7 +9,7 @@ const (
 	DueDateField     = "dueDate"
 )
 
-// Transformer en struct immutable ou champ exportable ?
+// DomainError could be transformed as immutable
 type DomainError struct {
 	field       string
 	code        string

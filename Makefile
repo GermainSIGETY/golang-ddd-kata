@@ -6,10 +6,10 @@ endif
 
 default: build
 
-run: tests
+run: tests tests-e2e
 	go run main.go
 
-build: tests
+build: tests tests-e2e
 	@echo "building Get things done app..."
 	go build -o GetThingsDone
 	@echo "built executable 'GetThingsDone'"
@@ -19,6 +19,9 @@ build: tests
 # don't execute e2e tests
 tests :
 	go test $(shell go list ./... | grep -v e2e) -count=1 -p 1
+
+tests-e2e :
+	go test -v -count=1 ./internal/e2e -count=1
 
 gen-open-api:
 	# 1. Génération des fichiers swagger

@@ -2,7 +2,7 @@ package model
 
 import "time"
 
-// Ce pattern est utilisé pour avoir une structure de donnée immutable après ça création avec le constructeur
+// ISummaryResponse Immutability pattern : object cannot be modified after its creation by constructor
 type ISummaryResponse interface {
 	Id() int
 	Title() string

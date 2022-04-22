@@ -43,7 +43,7 @@ func (t todoUpdateJSONRequest) DueDate() int64 {
 // @Tags todos
 // @Accept json
 // @Param id path int true "Todo ID"
-// @Param body body TodoCreationJSONRequest true "todo infos"
+// @Param body body todoUpdateJSONRequest true "todo infos"
 // @Success 204 "it's ok"
 // @Failure 422 {object} ErrorsArrayJsonResponse
 // @Failure 500 {object} ErrorsArrayJsonResponse

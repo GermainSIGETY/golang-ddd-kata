@@ -41,7 +41,7 @@ type TodoCreationJSONResponse struct {
 // @Tags todos
 // @Accept json
 // @Produce json
-// @Param body body TodoCreationJSONRequest true "todo infos"
+// @Param body body todoCreationJSONRequest true "todo infos"
 // @Success 200 {object} TodoCreationJSONResponse
 // @Failure 422 {object} ErrorsArrayJsonResponse
 // @Failure 500 {object} ErrorsArrayJsonResponse
