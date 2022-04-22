@@ -1,4 +1,4 @@
-package todo
+package model
 
 import "fmt"
 
@@ -9,6 +9,7 @@ const (
 	DueDateField     = "dueDate"
 )
 
+// Transformer en struct immutable ou champ exportable ?
 type DomainError struct {
 	field       string
 	code        string

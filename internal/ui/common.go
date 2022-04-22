@@ -2,9 +2,10 @@ package ui
 
 import (
 	"fmt"
-	"github.com/GermainSIGETY/golang-ddd-kata/internal/domain/todo"
-	"github.com/gin-gonic/gin"
 	"net/http"
+
+	"github.com/GermainSIGETY/golang-ddd-kata/internal/domain/todo/model"
+	"github.com/gin-gonic/gin"
 )
 
 const contentType = "Content-Type"
@@ -25,7 +26,7 @@ func answerBadRequest(context *gin.Context, message string) {
 }
 
 func answerError(context *gin.Context, err interface{}) {
-	errs, ok := err.([]todo.DomainError)
+	errs, ok := err.([]model.DomainError)
 	if !ok {
 		answerError500(context, err)
 		return
@@ -39,7 +40,7 @@ func answerResourceNotFound(context *gin.Context, message string) {
 	context.JSON(http.StatusNotFound, ErrorsArrayJsonResponse{[]ErrorJsonResponse{errorJson}})
 }
 
-func answerUnprocessableEntity(context *gin.Context, errs []todo.DomainError) {
+func answerUnprocessableEntity(context *gin.Context, errs []model.DomainError) {
 	jsonErrors := make([]ErrorJsonResponse, len(errs))
 	for i, v := range errs {
 		code := v.Code()

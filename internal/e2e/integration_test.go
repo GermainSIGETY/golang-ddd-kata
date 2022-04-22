@@ -1,11 +1,12 @@
 package e2e
 
 import (
-	"github.com/GermainSIGETY/golang-ddd-kata/internal/bootstrap"
-	"github.com/cucumber/godog"
 	"os"
 	"testing"
 	"time"
+
+	"github.com/GermainSIGETY/golang-ddd-kata/internal/bootstrap"
+	"github.com/cucumber/godog"
 )
 
 func InitializeTestSuite(ctx *godog.TestSuiteContext) {

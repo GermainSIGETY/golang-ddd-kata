@@ -4,10 +4,11 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/GermainSIGETY/golang-ddd-kata/internal/ui"
 	"io/ioutil"
 	"net/http"
 	"strconv"
+
+	"github.com/GermainSIGETY/golang-ddd-kata/internal/ui"
 )
 
 type jsonRequest struct {
@@ -18,7 +19,7 @@ type jsonRequest struct {
 
 func (world *TodoWorld) ATodoWithTitleADescriptionAndADueDate(title, description string, date string) (err error) {
 
-	_, dueDate := stringToDate(date)
+	dueDate, _ := stringToDate(date)
 
 	req := jsonRequest{title, description, dueDate}
 

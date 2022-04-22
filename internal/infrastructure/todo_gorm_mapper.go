@@ -1,25 +1,34 @@
 package infrastructure
 
-import "github.com/GermainSIGETY/golang-ddd-kata/internal/domain/todo"
+import (
+	"github.com/GermainSIGETY/golang-ddd-kata/internal/domain/todo/model"
+)
 
-func FromTodo(todo todo.Todo) todoGORM {
+func FromTodo(todo model.Todo) todoGORM {
 
-	descriptionValue := todo.Description()
+	descriptionValue := todo.Description
 	var descriptionToSave *string
 	if descriptionToSave = &descriptionValue; descriptionValue == "" {
 		descriptionToSave = nil
 	}
 
-	return todoGORM{todo.ID(), todo.Title(), descriptionToSave,
-		todo.CreationDate(), todo.DueDate()}
+	return todoGORM{todo.ID, todo.Title, descriptionToSave,
+		todo.CreationDate, todo.DueDate}
 }
 
-func FromTodoGORM(todoGORM todoGORM) todo.Todo {
+func FromTodoGORM(todoGORM todoGORM) model.Todo {
 	var descriptionValue string
 	if todoGORM.Description != nil {
 		descriptionValue = *todoGORM.Description
 	}
-	var todo = todo.NewTodo(todoGORM.ID, todoGORM.Title, descriptionValue,
-		todoGORM.CreationDate, todoGORM.DueDate)
+
+	todo := model.Todo{
+		ID: todoGORM.ID,
+
+		CreationDate: todoGORM.CreationDate,
+		Description:  descriptionValue,
+		DueDate:      todoGORM.DueDate,
+		Title:        todoGORM.Title,
+	}
 	return todo
 }

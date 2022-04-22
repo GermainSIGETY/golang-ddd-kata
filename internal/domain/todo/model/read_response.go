@@ -1,4 +1,4 @@
-package todo
+package model
 
 import "time"
 

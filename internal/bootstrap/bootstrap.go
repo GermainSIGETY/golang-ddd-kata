@@ -1,7 +1,7 @@
 package bootstrap
 
 import (
-	"github.com/GermainSIGETY/golang-ddd-kata/internal/domain/todo"
+	"github.com/GermainSIGETY/golang-ddd-kata/internal/domain/todo/api"
 	"github.com/GermainSIGETY/golang-ddd-kata/internal/infrastructure"
 	"github.com/GermainSIGETY/golang-ddd-kata/internal/ui"
 )
@@ -15,10 +15,10 @@ func LaunchAppForIntegrationTest() {
 }
 
 func launchApp(url string, drop bool) {
-	repository := infrastructure.TodosRepository{}
-	if err := repository.InitDatabase(url, drop); err != nil {
+	repository, err := infrastructure.NewTodosRepository(url, drop)
+	if err != nil {
 		panic(err)
 	}
-	todosAPI := todo.NewApi(&repository)
+	todosAPI := api.NewApi(repository)
 	ui.NewRouter(todosAPI)
 }

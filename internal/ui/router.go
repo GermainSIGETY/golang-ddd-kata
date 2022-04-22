@@ -1,11 +1,11 @@
 package ui
 
 import (
-	"github.com/GermainSIGETY/golang-ddd-kata/internal/domain/todo"
+	"github.com/GermainSIGETY/golang-ddd-kata/internal/domain/todo/api"
 	"github.com/gin-gonic/gin"
 )
 
-func NewRouter(api todo.TodosAPI) {
+func NewRouter(api api.TodosAPI) {
 
 	r := gin.Default()
 

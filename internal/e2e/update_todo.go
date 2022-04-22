@@ -15,7 +15,7 @@ type updateJsonRequest struct {
 }
 
 func (world *TodoWorld) UserUpdatesPreviouslyCreatedTodoWithTitleDescriptionAndDueDate(title, description, dueDateAsString string) error {
-	_, dueDate := stringToDate(dueDateAsString)
+	dueDate, _ := stringToDate(dueDateAsString)
 
 	jsonRequest := updateJsonRequest{&title, &description, &dueDate}
 

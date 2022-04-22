@@ -1,10 +1,11 @@
 package ui
 
 import (
-	"github.com/GermainSIGETY/golang-ddd-kata/internal/domain/todo"
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
+
+	"github.com/GermainSIGETY/golang-ddd-kata/internal/domain/todo/api"
+	"github.com/gin-gonic/gin"
 )
 
 // HandleDelete godoc
@@ -18,7 +19,7 @@ import (
 // @Failure 422 {object} ErrorsArrayJsonResponse
 // @Failure 500 {object} ErrorsArrayJsonResponse
 // @Router /todos/{id} [delete]
-func handleDelete(context *gin.Context, IDAsString string, api todo.TodosAPI) {
+func handleDelete(context *gin.Context, IDAsString string, api api.TodosAPI) {
 	ID, err := strconv.Atoi(IDAsString)
 	if err != nil {
 		answerBadRequest(context, "todo ID in path must be an integer")
