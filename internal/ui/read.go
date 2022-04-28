@@ -5,9 +5,10 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/gin-gonic/gin"
+
 	"github.com/GermainSIGETY/golang-ddd-kata/internal/domain/todo/api"
 	"github.com/GermainSIGETY/golang-ddd-kata/internal/domain/todo/model"
-	"github.com/gin-gonic/gin"
 )
 
 type TodoReadJSONResponse struct {
@@ -29,14 +30,14 @@ type TodoReadJSONResponse struct {
 // @Failure 404 {object} ErrorsArrayJsonResponse
 // @Failure 500 {object} ErrorsArrayJsonResponse
 // @Router /todos/{id} [get]
-func handleReadTodo(context *gin.Context, IDAsString string, api api.TodosAPI) {
+func handleReadTodo(context *gin.Context, IDAsString string) {
 	ID, err := strconv.Atoi(IDAsString)
 	if err != nil {
 		answerBadRequest(context, "todo ID in path must be an integer")
 		return
 	}
 
-	response, errs := api.ReadTodo(ID)
+	response, errs := api.GetTodoApi().ReadTodo(ID)
 	if errs != nil {
 		answerError(context, errs)
 		return

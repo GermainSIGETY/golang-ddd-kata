@@ -5,8 +5,9 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/GermainSIGETY/golang-ddd-kata/internal/domain/todo/api"
 	"github.com/gin-gonic/gin"
+
+	"github.com/GermainSIGETY/golang-ddd-kata/internal/domain/todo/api"
 )
 
 // We do not use validation tags like : validate:"required"
@@ -48,7 +49,7 @@ func (t todoUpdateJSONRequest) DueDate() int64 {
 // @Failure 422 {object} ErrorsArrayJsonResponse
 // @Failure 500 {object} ErrorsArrayJsonResponse
 // @Router /todos/{id} [put]
-func handleUpdate(context *gin.Context, IDAsString string, api api.TodosAPI) {
+func handleUpdate(context *gin.Context, IDAsString string) {
 	id, err := strconv.Atoi(IDAsString)
 	if err != nil {
 		answerBadRequest(context, "todo ID in path must be an integer")
@@ -63,7 +64,7 @@ func handleUpdate(context *gin.Context, IDAsString string, api api.TodosAPI) {
 	}
 
 	jsonRequest.id = id
-	errs := api.UpdateTodo(jsonRequest)
+	errs := api.GetTodoApi().UpdateTodo(jsonRequest)
 	if errs != nil {
 		answerError(context, errs)
 		return
