@@ -11,6 +11,7 @@ import (
 )
 
 const (
+	todoID                = 12
 	todoTitle             = "Be smart"
 	todoDescription       = "even at home"
 	todoDueDate     int64 = 12345
@@ -109,13 +110,6 @@ func Test_Creation(t *testing.T) {
 	}
 }
 
-const (
-	updateTodoID                = 12
-	updateTodoTitle             = "Be funny"
-	updateTodoDescription       = "even at work"
-	updateTodoDueDate     int64 = 123456
-)
-
 type updateRequestForTest struct {
 	id          int
 	title       string
@@ -149,13 +143,13 @@ func Test_Update(t *testing.T) {
 		{
 			name: "nominal case",
 			given: updateRequestForTest{
-				id:          updateTodoID,
+				id:          todoID,
 				title:       todoTitle,
 				description: todoDescription,
 				dueDate:     todoDueDate,
 			},
 			expected: model.Todo{
-				ID:          updateTodoID,
+				ID:          todoID,
 				Title:       todoTitle,
 				Description: todoDescription,
 				DueDate:     time.Unix(todoDueDate, 0),
@@ -165,13 +159,13 @@ func Test_Update(t *testing.T) {
 		{
 			name: "empty description",
 			given: updateRequestForTest{
-				id:          updateTodoID,
+				id:          todoID,
 				title:       todoTitle,
 				description: "",
 				dueDate:     todoDueDate,
 			},
 			expected: model.Todo{
-				ID:          updateTodoID,
+				ID:          todoID,
 				Title:       todoTitle,
 				Description: "",
 				DueDate:     time.Unix(todoDueDate, 0),
