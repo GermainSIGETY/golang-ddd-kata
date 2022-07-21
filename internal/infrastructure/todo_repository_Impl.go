@@ -75,13 +75,35 @@ func handleReadError(err error) (model.Todo, error) {
 	return todo, err
 }
 
-func (repository todosRepository) Create(todo model.Todo) (int, error) {
+func (repository todosRepository) Create(todo model.Todo) (int, *model.Error) {
+	op := model.Operation("infrastructure.createTodo")
+	isTodoAleradySaved, err := repository.checkIfExists(todo)
+	if err != nil {
+		return 0, err.AppendOperation(op)
+	}
+	if isTodoAleradySaved {
+		return 0, model.New(op, errors.New("title already used"), model.INFO)
+	}
 	var todoGORM = FromTodo(todo)
+
 	db := repository.db.Create(&todoGORM)
 	if db.Error != nil {
-		return 0, db.Error
+		return 0, model.New(op, db.Error)
 	}
 	return todoGORM.ID, nil
+}
+
+func (repository todosRepository) checkIfExists(todo model.Todo) (bool, *model.Error) {
+	exists := false
+	db := repository.db.Model(&todoGORM{}).
+		Select("count(*) > 0").
+		Where("title = ?", todo.Title).
+		Find(&exists)
+	if db.Error != nil {
+		op := model.Operation("infra.checkIfExists")
+		return false, model.New(op, db.Error)
+	}
+	return exists, nil
 }
 
 func (repository todosRepository) UpdateTodo(todo model.Todo) error {

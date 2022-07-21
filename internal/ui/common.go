@@ -53,7 +53,7 @@ func answerUnprocessableEntity(context *gin.Context, errs []model.DomainError) {
 }
 
 func answerError500(context *gin.Context, err interface{}) {
-	fmt.Printf("ERROR : %v", err)
+	fmt.Printf("FATAL : %v", err)
 	context.Header(contentType, JSONContentType)
 	context.String(http.StatusInternalServerError, "{\"errors\":[{\"code\": \"INTERNAL_ERROR\"}]}")
 }

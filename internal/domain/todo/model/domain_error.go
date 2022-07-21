@@ -16,8 +16,12 @@ type DomainError struct {
 	description string
 }
 
-func NewTodoDomainError(field string, code string, description string) DomainError {
-	return DomainError{field: field, code: code, description: description}
+func (e *DomainError) Error() string {
+	return fmt.Sprintf("%v %v %v", e.field, e.code, e.description)
+}
+
+func NewTodoDomainError(field string, code string, description string) *DomainError {
+	return &DomainError{field: field, code: code, description: description}
 }
 
 func (e DomainError) Field() string {
@@ -30,8 +34,4 @@ func (e DomainError) Code() string {
 
 func (e DomainError) Description() string {
 	return e.description
-}
-
-func (e *DomainError) Error() string {
-	return fmt.Sprintf("%v %v %v", e.field, e.code, e.description)
 }

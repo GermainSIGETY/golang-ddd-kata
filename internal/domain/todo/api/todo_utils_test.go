@@ -77,9 +77,9 @@ func Test_Creation(t *testing.T) {
 			},
 			expected: model.Todo{},
 			expectedErrs: []model.DomainError{
-				model.NewTodoDomainError(model.TitleField, validators.EmptyFieldCode, validators.EmptyFieldDescription),
-				model.NewTodoDomainError(model.DescriptionField, validators.FieldTooLongCode, fmt.Sprintf(validators.FieldToLongDescription, 255)),
-				model.NewTodoDomainError(model.DueDateField, validators.EmptyFieldCode, validators.EmptyFieldDescription),
+				*model.NewTodoDomainError(model.TitleField, validators.EmptyFieldCode, validators.EmptyFieldDescription),
+				*model.NewTodoDomainError(model.DescriptionField, validators.FieldTooLongCode, fmt.Sprintf(validators.FieldToLongDescription, 255)),
+				*model.NewTodoDomainError(model.DueDateField, validators.EmptyFieldCode, validators.EmptyFieldDescription),
 			},
 		},
 	}
@@ -93,13 +93,9 @@ func Test_Creation(t *testing.T) {
 				assert.Equal(t, tt.expected.DueDate.Unix(), result.DueDate.Unix())
 			} else {
 				assert.NotNil(t, err)
-				assert.Equal(t, len(tt.expectedErrs), len(err))
-				errorsMap := make(map[string]model.DomainError)
-				for _, err := range err {
-					errorsMap[err.Field()] = err
-				}
-				for _, expectedErr := range tt.expectedErrs {
-					actualErr := errorsMap[expectedErr.Field()]
+				assert.Equal(t, len(tt.expectedErrs), len(err.RootCauses))
+				for index, expectedErr := range tt.expectedErrs {
+					actualErr := err.RootCauses[index].(*model.DomainError)
 					assert.NotNil(t, actualErr)
 					assert.Equal(t, expectedErr.Field(), actualErr.Field())
 					assert.Equal(t, expectedErr.Code(), actualErr.Code())
@@ -182,10 +178,10 @@ func Test_Update(t *testing.T) {
 			},
 			expected: model.Todo{},
 			expectedErrs: []model.DomainError{
-				model.NewTodoDomainError(model.IDField, validators.InvalidNumberCode, validators.InvalidNumberDescription),
-				model.NewTodoDomainError(model.TitleField, validators.EmptyFieldCode, validators.EmptyFieldDescription),
-				model.NewTodoDomainError(model.DescriptionField, validators.FieldTooLongCode, fmt.Sprintf(validators.FieldToLongDescription, 255)),
-				model.NewTodoDomainError(model.DueDateField, validators.EmptyFieldCode, validators.EmptyFieldDescription),
+				*model.NewTodoDomainError(model.IDField, validators.InvalidNumberCode, validators.InvalidNumberDescription),
+				*model.NewTodoDomainError(model.TitleField, validators.EmptyFieldCode, validators.EmptyFieldDescription),
+				*model.NewTodoDomainError(model.DescriptionField, validators.FieldTooLongCode, fmt.Sprintf(validators.FieldToLongDescription, 255)),
+				*model.NewTodoDomainError(model.DueDateField, validators.EmptyFieldCode, validators.EmptyFieldDescription),
 			},
 		},
 	}

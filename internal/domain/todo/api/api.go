@@ -14,14 +14,15 @@ func NewApi(repository port.ITodosRepository) TodosAPI {
 	return TodosAPI{repository}
 }
 
-func (api TodosAPI) CreateTodo(request port.CreationRequest) (int, interface{}) {
+func (api TodosAPI) CreateTodo(request port.CreationRequest) (int, *model.Error) {
+	op := model.Operation("api.createTodo")
 	toPersist, err := FromTodoCreationRequest(request)
 	if err != nil {
-		return 0, err
+		return 0, err.AppendOperation(op)
 	}
 	createdId, creationError := api.todosRepository.Create(toPersist)
 	if creationError != nil {
-		return 0, creationError
+		return 0, creationError.AppendOperation(op)
 	}
 	return createdId, nil
 }
@@ -43,7 +44,7 @@ func (api TodosAPI) UpdateTodo(request port.UpdateRequest) interface{} {
 
 	if todo == (model.Todo{}) {
 		domainError := model.NewTodoDomainError(model.IDField, validators.InvalidTodoIdCode, validators.InvalidTodoIdDescription)
-		return []model.DomainError{domainError}
+		return []model.DomainError{*domainError}
 	}
 
 	UpdateFromTodoUpdateRequest(&todo, request)
@@ -69,7 +70,7 @@ func (api TodosAPI) ReadTodoList() ([]model.ISummaryResponse, error) {
 func handleDeleteError(err error) interface{} {
 	if err.Error() == port.NoRowDeleted {
 		domainError := model.NewTodoDomainError(model.IDField, validators.InvalidTodoIdCode, validators.InvalidTodoIdDescription)
-		return []model.DomainError{domainError}
+		return []model.DomainError{*domainError}
 
 	}
 	return err

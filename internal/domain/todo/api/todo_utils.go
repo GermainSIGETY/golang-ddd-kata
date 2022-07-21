@@ -15,9 +15,10 @@ func UpdateFromTodoUpdateRequest(t *model.Todo, request port.UpdateRequest) {
 	t.DueDate = time.Unix(request.DueDate(), 0)
 }
 
-func FromTodoCreationRequest(request port.CreationRequest) (model.Todo, []model.DomainError) {
-	if errors := validateCreationRequest(request); errors != nil {
-		return model.Todo{}, errors
+func FromTodoCreationRequest(request port.CreationRequest) (model.Todo, *model.Error) {
+	op := model.Operation("api.convertTodoCreationRequest")
+	if err := validateCreationRequest(request); err != nil {
+		return model.Todo{}, err.AppendOperation(op)
 	}
 	return model.Todo{
 		Title:        request.Title(),
@@ -27,22 +28,27 @@ func FromTodoCreationRequest(request port.CreationRequest) (model.Todo, []model.
 	}, nil
 }
 
-func validateCreationRequest(request port.CreationRequest) []model.DomainError {
-	var errs []model.DomainError
-
+func validateCreationRequest(request port.CreationRequest) *model.Error {
+	myError := model.New(model.Operation("api.validateCreationRequest"), model.FATAL)
 	titleErr := validators.ValidateTitle(request.Title())
 	if titleErr != (validators.ValidationError{}) {
-		errs = append(errs, model.NewTodoDomainError(model.TitleField, titleErr.Code(), titleErr.Description()))
+		myError.RootCauses = append(myError.RootCauses, model.NewTodoDomainError(model.TitleField, titleErr.Code(), titleErr.Description()))
 	}
 	descriptionErr := validators.ValidateDescription(request.Description())
 	if descriptionErr != (validators.ValidationError{}) {
-		errs = append(errs, model.NewTodoDomainError(model.DescriptionField, descriptionErr.Code(), descriptionErr.Description()))
+		myError.RootCauses = append(myError.RootCauses, model.NewTodoDomainError(model.DescriptionField, descriptionErr.Code(), descriptionErr.Description()))
 	}
 	dueDateErr := validators.ValidateDueDate(request.DueDate())
 	if dueDateErr != (validators.ValidationError{}) {
-		errs = append(errs, model.NewTodoDomainError(model.DueDateField, dueDateErr.Code(), dueDateErr.Description()))
+		myError.RootCauses = append(myError.RootCauses, model.NewTodoDomainError(model.DueDateField, dueDateErr.Code(), dueDateErr.Description()))
 	}
-	return errs
+	if len(myError.RootCauses) > 0 {
+		// TODO: handle payload
+		//var payload model.TodoErrorPayload
+		return myError
+	}
+
+	return nil
 }
 
 func FromTodoUpdateRequest(request port.UpdateRequest) (model.Todo, []model.DomainError) {
@@ -65,19 +71,19 @@ func validateUpdateRequest(request port.UpdateRequest) []model.DomainError {
 
 	idErr := validators.ValidateTodoId(request.Id())
 	if idErr != (validators.ValidationError{}) {
-		errs = append(errs, model.NewTodoDomainError(model.IDField, idErr.Code(), idErr.Description()))
+		errs = append(errs, *model.NewTodoDomainError(model.IDField, idErr.Code(), idErr.Description()))
 	}
 	titleErr := validators.ValidateTitle(request.Title())
 	if titleErr != (validators.ValidationError{}) {
-		errs = append(errs, model.NewTodoDomainError(model.TitleField, titleErr.Code(), titleErr.Description()))
+		errs = append(errs, *model.NewTodoDomainError(model.TitleField, titleErr.Code(), titleErr.Description()))
 	}
 	descriptionErr := validators.ValidateDescription(request.Description())
 	if descriptionErr != (validators.ValidationError{}) {
-		errs = append(errs, model.NewTodoDomainError(model.DescriptionField, descriptionErr.Code(), descriptionErr.Description()))
+		errs = append(errs, *model.NewTodoDomainError(model.DescriptionField, descriptionErr.Code(), descriptionErr.Description()))
 	}
 	dueDateErr := validators.ValidateDueDate(request.DueDate())
 	if dueDateErr != (validators.ValidationError{}) {
-		errs = append(errs, model.NewTodoDomainError(model.DueDateField, dueDateErr.Code(), dueDateErr.Description()))
+		errs = append(errs, *model.NewTodoDomainError(model.DueDateField, dueDateErr.Code(), dueDateErr.Description()))
 	}
 	return errs
 }

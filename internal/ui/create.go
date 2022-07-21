@@ -1,7 +1,9 @@
 package ui
 
 import (
-	"fmt"
+	"errors"
+	"github.com/GermainSIGETY/golang-ddd-kata/internal/domain/todo/model"
+	log "github.com/sirupsen/logrus"
 	"net/http"
 
 	"github.com/GermainSIGETY/golang-ddd-kata/internal/domain/todo/api"
@@ -47,17 +49,45 @@ type TodoCreationJSONResponse struct {
 // @Failure 500 {object} ErrorsArrayJsonResponse
 // @Router /todos [post]
 func handleCreate(context *gin.Context, api api.TodosAPI) {
+	op := model.Operation("ui.handleCreate")
 	var jsonRequest todoCreationJSONRequest
 	if errs := context.ShouldBindJSON(&jsonRequest); errs != nil {
-		fmt.Print(errs)
-		answerBadRequest(context, "unable to parse TODO Creation JSON body")
+		errorMessage := "unable to parse TODO Creation JSON body"
+		err := model.New(op, model.FATAL, errors.New(errorMessage))
+		logError(err)
+		answerBadRequest(context, errorMessage)
 		return
 	}
 
 	ID, err := api.CreateTodo(jsonRequest)
 	if err != nil {
+		err.AppendOperation(op)
+		logError(err)
 		answerError(context, err)
 		return
 	}
 	context.JSON(http.StatusOK, TodoCreationJSONResponse{ID})
+}
+
+// Consommation:
+func logError(err *model.Error) {
+	switch err.Severity {
+	case model.FATAL:
+		log.WithError(err).WithFields(log.Fields{
+			"operations": err.Op,
+		}).Error("Fatal error")
+	case model.WARNING:
+		log.WithError(err).WithFields(log.Fields{
+			"operations": err.Op,
+		}).Warn("Warning error")
+	case model.INFO:
+		log.WithError(err).WithFields(log.Fields{
+			"operations": err.Op,
+		}).Info("Info error")
+	default:
+		log.WithError(err).WithFields(log.Fields{
+			"operations": err.Op,
+		}).Error("Fatal error")
+	}
+
 }
