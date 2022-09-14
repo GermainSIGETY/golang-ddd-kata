@@ -3,10 +3,11 @@ package infrastructure
 import (
 	"errors"
 
-	"github.com/GermainSIGETY/golang-ddd-kata/internal/domain/todo/model"
-	"github.com/GermainSIGETY/golang-ddd-kata/internal/domain/todo/port"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
+
+	"github.com/GermainSIGETY/golang-ddd-kata/internal/domain/todo/model"
+	"github.com/GermainSIGETY/golang-ddd-kata/internal/domain/todo/port"
 )
 
 type todosRepository struct {
@@ -17,10 +18,17 @@ const (
 	goORMRecordNotFoundError = "record not found"
 )
 
-func NewTodosRepository(URL string, drop bool) (port.ITodosRepository, error) {
-	rep := todosRepository{}
-	err := rep.InitDatabase(URL, drop)
-	return rep, err
+var todoRepository port.ITodosRepository
+
+func InitTodosRepository(URL string, drop bool) error {
+	todoRepo := todosRepository{}
+	err := todoRepo.InitDatabase(URL, drop)
+	todoRepository = todoRepo
+	return err
+}
+
+func GetTodosRepository() port.ITodosRepository {
+	return todoRepository
 }
 
 func (repository *todosRepository) InitDatabase(URL string, drop bool) error {

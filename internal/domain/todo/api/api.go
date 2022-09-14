@@ -4,14 +4,19 @@ import (
 	"github.com/GermainSIGETY/golang-ddd-kata/internal/domain/todo/model"
 	"github.com/GermainSIGETY/golang-ddd-kata/internal/domain/todo/port"
 	"github.com/GermainSIGETY/golang-ddd-kata/internal/domain/validators"
+	"github.com/GermainSIGETY/golang-ddd-kata/internal/infrastructure"
 )
 
-type TodosAPI struct {
-	todosRepository port.ITodosRepository
+type TodosAPI struct{}
+
+var todoAPI *TodosAPI
+
+func init() {
+	todoAPI = new(TodosAPI)
 }
 
-func NewApi(repository port.ITodosRepository) TodosAPI {
-	return TodosAPI{repository}
+func GetTodoApi() TodosAPI {
+	return *todoAPI
 }
 
 func (api TodosAPI) CreateTodo(request port.CreationRequest) (int, interface{}) {
@@ -19,7 +24,7 @@ func (api TodosAPI) CreateTodo(request port.CreationRequest) (int, interface{}) 
 	if err != nil {
 		return 0, err
 	}
-	createdId, creationError := api.todosRepository.Create(toPersist)
+	createdId, creationError := infrastructure.GetTodosRepository().Create(toPersist)
 	if creationError != nil {
 		return 0, creationError
 	}
@@ -27,7 +32,7 @@ func (api TodosAPI) CreateTodo(request port.CreationRequest) (int, interface{}) 
 }
 
 func (api TodosAPI) ReadTodo(ID int) (model.ReadTodoResponse, error) {
-	todo, err := api.todosRepository.ReadTodo(ID)
+	todo, err := infrastructure.GetTodosRepository().ReadTodo(ID)
 	if err != nil {
 		return model.ReadTodoResponse{}, err
 	}
@@ -36,7 +41,7 @@ func (api TodosAPI) ReadTodo(ID int) (model.ReadTodoResponse, error) {
 }
 
 func (api TodosAPI) UpdateTodo(request port.UpdateRequest) interface{} {
-	todo, errRead := api.todosRepository.ReadTodo(request.Id())
+	todo, errRead := infrastructure.GetTodosRepository().ReadTodo(request.Id())
 	if errRead != nil {
 		return errRead
 	}
@@ -47,7 +52,7 @@ func (api TodosAPI) UpdateTodo(request port.UpdateRequest) interface{} {
 	}
 
 	UpdateFromTodoUpdateRequest(&todo, request)
-	if errUpdate := api.todosRepository.UpdateTodo(todo); errUpdate != nil {
+	if errUpdate := infrastructure.GetTodosRepository().UpdateTodo(todo); errUpdate != nil {
 		return errUpdate
 	}
 
@@ -55,7 +60,7 @@ func (api TodosAPI) UpdateTodo(request port.UpdateRequest) interface{} {
 }
 
 func (api TodosAPI) DeleteTodo(id int) interface{} {
-	deleteError := api.todosRepository.DeleteTodo(id)
+	deleteError := infrastructure.GetTodosRepository().DeleteTodo(id)
 	if deleteError != nil {
 		return handleDeleteError(deleteError)
 	}
@@ -63,7 +68,7 @@ func (api TodosAPI) DeleteTodo(id int) interface{} {
 }
 
 func (api TodosAPI) ReadTodoList() ([]model.ISummaryResponse, error) {
-	return api.todosRepository.ReadTodoList()
+	return infrastructure.GetTodosRepository().ReadTodoList()
 }
 
 func handleDeleteError(err error) interface{} {

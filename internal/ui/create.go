@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/GermainSIGETY/golang-ddd-kata/internal/domain/todo/api"
 	"github.com/gin-gonic/gin"
+
+	"github.com/GermainSIGETY/golang-ddd-kata/internal/domain/todo/api"
 )
 
 // We do not use validation tags like : validate:"required"
@@ -46,7 +47,7 @@ type TodoCreationJSONResponse struct {
 // @Failure 422 {object} ErrorsArrayJsonResponse
 // @Failure 500 {object} ErrorsArrayJsonResponse
 // @Router /todos [post]
-func handleCreate(context *gin.Context, api api.TodosAPI) {
+func handleCreate(context *gin.Context) {
 	var jsonRequest todoCreationJSONRequest
 	if errs := context.ShouldBindJSON(&jsonRequest); errs != nil {
 		fmt.Print(errs)
@@ -54,7 +55,7 @@ func handleCreate(context *gin.Context, api api.TodosAPI) {
 		return
 	}
 
-	ID, err := api.CreateTodo(jsonRequest)
+	ID, err := api.GetTodoApi().CreateTodo(jsonRequest)
 	if err != nil {
 		answerError(context, err)
 		return
