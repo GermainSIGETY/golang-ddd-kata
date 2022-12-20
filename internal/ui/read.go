@@ -1,12 +1,10 @@
 package ui
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 
 	"github.com/GermainSIGETY/golang-ddd-kata/internal/domain/todo/api"
-	"github.com/GermainSIGETY/golang-ddd-kata/internal/domain/todo/model"
 	"github.com/gin-gonic/gin"
 )
 
@@ -32,20 +30,14 @@ type TodoReadJSONResponse struct {
 func handleReadTodo(context *gin.Context, IDAsString string, api api.TodosAPI) {
 	ID, err := strconv.Atoi(IDAsString)
 	if err != nil {
-		answerBadRequest(context, "todo ID in path must be an integer")
+		answerError400(context, "todo ID in path must be an integer")
 		return
 	}
-
-	response, errs := api.ReadTodo(ID)
-	if errs != nil {
-		answerError(context, errs)
+	response, error := api.ReadTodo(ID)
+	if error != nil {
+		answerError(context, error)
 		return
 	}
-	if response == (model.ReadTodoResponse{}) {
-		answerResourceNotFound(context, fmt.Sprintf("no todo with ID : %v", ID))
-		return
-	}
-
 	jsonResponse := TodoReadJSONResponse{response.ID, response.Title, response.Description, response.CreationDate.Unix(), response.DueDate.Unix()}
 	context.JSON(http.StatusOK, jsonResponse)
 }

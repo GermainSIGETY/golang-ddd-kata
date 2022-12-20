@@ -19,7 +19,7 @@ https://github.com/golang-standards/project-layout
 
 ### internal/domain
 
-**The hexagon**
+**The hexagon - the domain**
 - contains all business logic; validation rules of users inputs ; mandatory information for a Todo, format of fields and so on => it validates invariants of value objects entering into the system
 - contains domain objects. Business concepts and words have their objects in your code (ubiquitous language). Here just one domain object which is a Todo
 - transaction boundaries : manage database transactions ; decide whether actions results should be persisted or rollbacked.
@@ -29,26 +29,33 @@ https://github.com/golang-standards/project-layout
 ### internal/infrastructure
 
 **Infrastructure layer**
-- contains implementation of means for hexagon to communicate with the outside world
-- here GetThingsDone-infra is responsible for one major topic ; manage persistence of Todos with a persistent storage : here a database
+- contains implementation of tools used by the domain to communicate with the outside world
+- here GetThingsDone-infra is responsible for one major topic ; manage persistence of our 'Todos' with a persistent storage : a database
 
-But it could be many others responsibilities ; sending email, SMS, push notification, read configuration info etc.
+But it could be many others responsibilities ; sending email, SMS, push notifications, read configuration info etc.
 
-**dependencies** : domain, and some Golang stuff for persistence : GORM, SQL drivers etc.
+**dependencies** : 
+- domain, and some Golang stuff for persistence : GORM, SQL drivers etc
+- it could be anything : http client libraries, libraries for Saas
 
 ### internal/ui  
 
-**UI and final runnable artifact**
-- contains Go main class : entry point to launch the whole stuff
-- user interface : user interface is a HTTP Rest/JSON API, but it could be html pages, CLI, gRPC etc.
-- application packaging : an executable file
+**UI of the application**
+
+- Listen, receive, deserialize, decode, read requests…
+- ... then send requests to domain…
+- ... and receives responses from domain and send back responses (serialization)
+
+> :warning: **no validations of any fields of requests. Not any business rule !
+
+=> this part should be as thin as possible, interchangeable without side effect for domain
 
 **dependencies** : domain, infrastructure, and Golang stuff for http/Rest/JSON
 
 ### internal/bootstrap
 
 **Code to initiate and launch API**
-- create the API, repository, http and and so one
+- create the API, infra (repository), and ui
 
 **dependencies** : domain, infrastructure and ui
 

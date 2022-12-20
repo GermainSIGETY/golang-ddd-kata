@@ -1,12 +1,8 @@
-package model
+package domain_error
 
-import "fmt"
-
-const (
-	IDField          = "id"
-	TitleField       = "title"
-	DescriptionField = "description"
-	DueDateField     = "dueDate"
+import (
+	"errors"
+	"fmt"
 )
 
 // DomainError could be transformed as immutable
@@ -16,7 +12,7 @@ type DomainError struct {
 	description string
 }
 
-func NewTodoDomainError(field string, code string, description string) DomainError {
+func NewDomainError(field string, code string, description string) DomainError {
 	return DomainError{field: field, code: code, description: description}
 }
 
@@ -32,6 +28,14 @@ func (e DomainError) Description() string {
 	return e.description
 }
 
-func (e *DomainError) Error() string {
+func (e DomainError) Error() string {
 	return fmt.Sprintf("%v %v %v", e.field, e.code, e.description)
+}
+
+func JoinDomainErrors(toJoin []DomainError) error {
+	errorsToReturn := make([]error, len(toJoin))
+	for i := range toJoin {
+		errorsToReturn[i] = toJoin[i]
+	}
+	return errors.Join(errorsToReturn...)
 }

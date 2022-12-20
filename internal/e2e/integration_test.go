@@ -1,6 +1,9 @@
 package e2e
 
 import (
+	"flag"
+	"github.com/cucumber/godog/colors"
+	"github.com/gin-gonic/gin"
 	"os"
 	"testing"
 	"time"
@@ -35,22 +38,28 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.Step(`^User reads todoList$`, world.UserReadsTodoList)
 }
 
-func TestMain(m *testing.M) {
+func TestFeatures(t *testing.T) {
+
+	flag.Parse()
+	// Set Gin to Test Mode
+	gin.SetMode(gin.TestMode)
+
 	opts := godog.Options{
+		Output:    colors.Colored(os.Stdout),
 		Format:    "pretty",
 		Paths:     []string{"features"},
 		Randomize: time.Now().UTC().UnixNano(), // randomize scenario execution order
+		TestingT:  t,
 	}
 
-	status := godog.TestSuite{
+	testSuite := godog.TestSuite{
 		Name:                 "Todos integration tests suite",
 		TestSuiteInitializer: InitializeTestSuite,
 		ScenarioInitializer:  InitializeScenario,
 		Options:              &opts,
-	}.Run()
-
-	if st := m.Run(); st > status {
-		status = st
 	}
-	os.Exit(status)
+
+	if testSuite.Run() != 0 {
+		t.Fatal("non-zero status returned, failed to run feature tests")
+	}
 }

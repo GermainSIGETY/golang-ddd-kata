@@ -4,6 +4,9 @@ import (
 	"github.com/GermainSIGETY/golang-ddd-kata/internal/domain/todo/api"
 	"github.com/GermainSIGETY/golang-ddd-kata/internal/infrastructure"
 	"github.com/GermainSIGETY/golang-ddd-kata/internal/ui"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
+	"os"
 )
 
 func LaunchApp() {
@@ -15,9 +18,11 @@ func LaunchAppForIntegrationTest() {
 }
 
 func launchApp(url string, drop bool) {
+	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stdout})
+
 	repository, err := infrastructure.NewTodosRepository(url, drop)
 	if err != nil {
-		panic(err)
+		log.Fatal().Err(err).Msg("Error during locationSearchApi instantiation")
 	}
 	todosAPI := api.NewApi(repository)
 	ui.NewRouter(todosAPI)
