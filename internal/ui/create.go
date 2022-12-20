@@ -50,7 +50,7 @@ func handleCreate(context *gin.Context, api api.TodosAPI) {
 	var jsonRequest todoCreationJSONRequest
 	if errs := context.ShouldBindJSON(&jsonRequest); errs != nil {
 		fmt.Print(errs)
-		answerBadRequest(context, "unable to parse TODO Creation JSON body")
+		answerError400(context, "unable to parse TODO Creation JSON body")
 		return
 	}
 

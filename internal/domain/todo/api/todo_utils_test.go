@@ -2,6 +2,7 @@ package api
 
 import (
 	"fmt"
+	"github.com/GermainSIGETY/golang-ddd-kata/pkg/domain_error"
 	"testing"
 	"time"
 
@@ -38,7 +39,7 @@ func Test_Creation(t *testing.T) {
 		name         string
 		given        creationRequestForTest
 		expected     model.Todo
-		expectedErrs []model.DomainError
+		expectedErrs []domain_error.DomainError
 	}{
 		{
 			name: "nominal case",
@@ -76,10 +77,10 @@ func Test_Creation(t *testing.T) {
 				dueDate:     0,
 			},
 			expected: model.Todo{},
-			expectedErrs: []model.DomainError{
-				model.NewTodoDomainError(model.TitleField, validators.EmptyFieldCode, validators.EmptyFieldDescription),
-				model.NewTodoDomainError(model.DescriptionField, validators.FieldTooLongCode, fmt.Sprintf(validators.FieldToLongDescription, 255)),
-				model.NewTodoDomainError(model.DueDateField, validators.EmptyFieldCode, validators.EmptyFieldDescription),
+			expectedErrs: []domain_error.DomainError{
+				domain_error.NewDomainError(model.TitleField, validators.EmptyFieldCode, validators.EmptyFieldDescription),
+				domain_error.NewDomainError(model.DescriptionField, validators.FieldTooLongCode, fmt.Sprintf(validators.FieldToLongDescription, 255)),
+				domain_error.NewDomainError(model.DueDateField, validators.EmptyFieldCode, validators.EmptyFieldDescription),
 			},
 		},
 	}
@@ -94,7 +95,7 @@ func Test_Creation(t *testing.T) {
 			} else {
 				assert.NotNil(t, err)
 				assert.Equal(t, len(tt.expectedErrs), len(err))
-				errorsMap := make(map[string]model.DomainError)
+				errorsMap := make(map[string]domain_error.DomainError)
 				for _, err := range err {
 					errorsMap[err.Field()] = err
 				}
@@ -137,8 +138,7 @@ func Test_Update(t *testing.T) {
 	tests := []struct {
 		name         string
 		given        updateRequestForTest
-		expected     model.Todo
-		expectedErrs []model.DomainError
+		expectedErrs []domain_error.DomainError
 	}{
 		{
 			name: "nominal case",
@@ -147,12 +147,6 @@ func Test_Update(t *testing.T) {
 				title:       todoTitle,
 				description: todoDescription,
 				dueDate:     todoDueDate,
-			},
-			expected: model.Todo{
-				ID:          todoID,
-				Title:       todoTitle,
-				Description: todoDescription,
-				DueDate:     time.Unix(todoDueDate, 0),
 			},
 			expectedErrs: nil,
 		},
@@ -164,12 +158,6 @@ func Test_Update(t *testing.T) {
 				description: "",
 				dueDate:     todoDueDate,
 			},
-			expected: model.Todo{
-				ID:          todoID,
-				Title:       todoTitle,
-				Description: "",
-				DueDate:     time.Unix(todoDueDate, 0),
-			},
 			expectedErrs: nil,
 		},
 		{
@@ -180,29 +168,23 @@ func Test_Update(t *testing.T) {
 				description: fmt.Sprintf("%256v", "foo"),
 				dueDate:     0,
 			},
-			expected: model.Todo{},
-			expectedErrs: []model.DomainError{
-				model.NewTodoDomainError(model.IDField, validators.InvalidNumberCode, validators.InvalidNumberDescription),
-				model.NewTodoDomainError(model.TitleField, validators.EmptyFieldCode, validators.EmptyFieldDescription),
-				model.NewTodoDomainError(model.DescriptionField, validators.FieldTooLongCode, fmt.Sprintf(validators.FieldToLongDescription, 255)),
-				model.NewTodoDomainError(model.DueDateField, validators.EmptyFieldCode, validators.EmptyFieldDescription),
+			expectedErrs: []domain_error.DomainError{
+				domain_error.NewDomainError(model.IDField, validators.InvalidNumberCode, validators.InvalidNumberDescription),
+				domain_error.NewDomainError(model.TitleField, validators.EmptyFieldCode, validators.EmptyFieldDescription),
+				domain_error.NewDomainError(model.DescriptionField, validators.FieldTooLongCode, fmt.Sprintf(validators.FieldToLongDescription, 255)),
+				domain_error.NewDomainError(model.DueDateField, validators.EmptyFieldCode, validators.EmptyFieldDescription),
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result, err := FromTodoUpdateRequest(tt.given)
-			if tt.expectedErrs == nil {
-				assert.Empty(t, err)
-				assert.Equal(t, tt.expected.ID, result.ID)
-				assert.Equal(t, tt.expected.Title, result.Title)
-				assert.Equal(t, tt.expected.Description, result.Description)
-				assert.Equal(t, tt.expected.DueDate.Unix(), result.DueDate.Unix())
+			errs := ValidateUpdateRequest(tt.given)
+			if len(tt.expectedErrs) == 0 {
+				assert.Equal(t, 0, len(errs))
 			} else {
-				assert.NotNil(t, err)
-				assert.Equal(t, len(tt.expectedErrs), len(err))
-				errorsMap := make(map[string]model.DomainError)
-				for _, err := range err {
+				assert.Equal(t, len(tt.expectedErrs), len(errs))
+				errorsMap := make(map[string]domain_error.DomainError)
+				for _, err := range errs {
 					errorsMap[err.Field()] = err
 				}
 				for _, expectedErr := range tt.expectedErrs {
