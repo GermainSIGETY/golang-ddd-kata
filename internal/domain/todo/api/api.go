@@ -6,7 +6,6 @@ import (
 	"github.com/GermainSIGETY/golang-ddd-kata/internal/domain/todo/model"
 	"github.com/GermainSIGETY/golang-ddd-kata/internal/domain/todo/port"
 	"github.com/GermainSIGETY/golang-ddd-kata/internal/domain/validators"
-	"github.com/GermainSIGETY/golang-ddd-kata/pkg/domain_error"
 )
 
 const (
@@ -24,7 +23,7 @@ func NewApi(repository port.ITodosRepository) TodosAPI {
 func (api TodosAPI) CreateTodo(request port.CreationRequest) (int, error) {
 	toPersist, errs := FromTodoCreationRequest(request)
 	if len(errs) > 0 {
-		return 0, domain_error.JoinDomainErrors(errs)
+		return 0, model.JoinDomainErrors(errs)
 	}
 	createdId, creationError := api.todosRepository.Create(toPersist)
 	if creationError != nil {
@@ -46,7 +45,7 @@ func (api TodosAPI) ReadTodo(ID int) (model.ReadTodoResponse, error) {
 
 func (api TodosAPI) UpdateTodo(request port.UpdateRequest) error {
 	if errs := ValidateUpdateRequest(request); len(errs) > 0 {
-		return domain_error.JoinDomainErrors(errs)
+		return model.JoinDomainErrors(errs)
 	}
 
 	todo, errRead := api.todosRepository.ReadTodo(request.Id())
@@ -56,7 +55,7 @@ func (api TodosAPI) UpdateTodo(request port.UpdateRequest) error {
 	}
 
 	if todo == (model.Todo{}) {
-		domainError := domain_error.NewDomainError(model.IDField, validators.InvalidTodoIdCode, validators.InvalidTodoIdDescription)
+		domainError := model.NewDomainError(model.IDField, validators.InvalidTodoIdCode, validators.InvalidTodoIdDescription)
 		return domainError
 	}
 
@@ -82,7 +81,7 @@ func (api TodosAPI) ReadTodoList() ([]model.ISummaryResponse, error) {
 
 func handleDeleteError(err error) error {
 	if err.Error() == port.NoRowDeleted {
-		domainError := domain_error.NewDomainError(model.IDField, validators.InvalidTodoIdCode, validators.InvalidTodoIdDescription)
+		domainError := model.NewDomainError(model.IDField, validators.InvalidTodoIdCode, validators.InvalidTodoIdDescription)
 		return domainError
 	} else {
 		fmt.Printf("ERROR : %v", err)

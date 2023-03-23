@@ -1,7 +1,6 @@
 package api
 
 import (
-	"github.com/GermainSIGETY/golang-ddd-kata/pkg/domain_error"
 	"time"
 
 	"github.com/GermainSIGETY/golang-ddd-kata/internal/domain/todo/model"
@@ -16,7 +15,7 @@ func UpdateFromTodoUpdateRequest(t *model.Todo, request port.UpdateRequest) {
 	t.DueDate = time.Unix(request.DueDate(), 0)
 }
 
-func FromTodoCreationRequest(request port.CreationRequest) (model.Todo, []domain_error.DomainError) {
+func FromTodoCreationRequest(request port.CreationRequest) (model.Todo, []model.DomainError) {
 	if errors := validateCreationRequest(request); len(errors) > 0 {
 		return model.Todo{}, errors
 	}
@@ -28,42 +27,42 @@ func FromTodoCreationRequest(request port.CreationRequest) (model.Todo, []domain
 	}, nil
 }
 
-func validateCreationRequest(request port.CreationRequest) []domain_error.DomainError {
-	var errs []domain_error.DomainError
+func validateCreationRequest(request port.CreationRequest) []model.DomainError {
+	var errs []model.DomainError
 
 	titleErr := validators.ValidateTitle(request.Title())
 	if titleErr != (validators.ValidationError{}) {
-		errs = append(errs, domain_error.NewDomainError(model.TitleField, titleErr.Code(), titleErr.Description()))
+		errs = append(errs, model.NewDomainError(model.TitleField, titleErr.Code(), titleErr.Description()))
 	}
 	descriptionErr := validators.ValidateDescription(request.Description())
 	if descriptionErr != (validators.ValidationError{}) {
-		errs = append(errs, domain_error.NewDomainError(model.DescriptionField, descriptionErr.Code(), descriptionErr.Description()))
+		errs = append(errs, model.NewDomainError(model.DescriptionField, descriptionErr.Code(), descriptionErr.Description()))
 	}
 	dueDateErr := validators.ValidateDueDate(request.DueDate())
 	if dueDateErr != (validators.ValidationError{}) {
-		errs = append(errs, domain_error.NewDomainError(model.DueDateField, dueDateErr.Code(), dueDateErr.Description()))
+		errs = append(errs, model.NewDomainError(model.DueDateField, dueDateErr.Code(), dueDateErr.Description()))
 	}
 	return errs
 }
 
-func ValidateUpdateRequest(request port.UpdateRequest) []domain_error.DomainError {
-	var errs []domain_error.DomainError
+func ValidateUpdateRequest(request port.UpdateRequest) []model.DomainError {
+	var errs []model.DomainError
 
 	idErr := validators.ValidateTodoId(request.Id())
 	if idErr != (validators.ValidationError{}) {
-		errs = append(errs, domain_error.NewDomainError(model.IDField, idErr.Code(), idErr.Description()))
+		errs = append(errs, model.NewDomainError(model.IDField, idErr.Code(), idErr.Description()))
 	}
 	titleErr := validators.ValidateTitle(request.Title())
 	if titleErr != (validators.ValidationError{}) {
-		errs = append(errs, domain_error.NewDomainError(model.TitleField, titleErr.Code(), titleErr.Description()))
+		errs = append(errs, model.NewDomainError(model.TitleField, titleErr.Code(), titleErr.Description()))
 	}
 	descriptionErr := validators.ValidateDescription(request.Description())
 	if descriptionErr != (validators.ValidationError{}) {
-		errs = append(errs, domain_error.NewDomainError(model.DescriptionField, descriptionErr.Code(), descriptionErr.Description()))
+		errs = append(errs, model.NewDomainError(model.DescriptionField, descriptionErr.Code(), descriptionErr.Description()))
 	}
 	dueDateErr := validators.ValidateDueDate(request.DueDate())
 	if dueDateErr != (validators.ValidationError{}) {
-		errs = append(errs, domain_error.NewDomainError(model.DueDateField, dueDateErr.Code(), dueDateErr.Description()))
+		errs = append(errs, model.NewDomainError(model.DueDateField, dueDateErr.Code(), dueDateErr.Description()))
 	}
 	return errs
 }

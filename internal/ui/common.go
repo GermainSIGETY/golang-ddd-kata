@@ -3,7 +3,7 @@ package ui
 import (
 	"errors"
 	"github.com/GermainSIGETY/golang-ddd-kata/internal/domain/todo/api"
-	"github.com/GermainSIGETY/golang-ddd-kata/pkg/domain_error"
+	"github.com/GermainSIGETY/golang-ddd-kata/internal/domain/todo/model"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
 	"net/http"
@@ -23,7 +23,7 @@ type ErrorJsonResponse struct {
 }
 
 func answerError(context *gin.Context, err error) {
-	if errors.As(err, &domain_error.DomainError{}) {
+	if errors.As(err, &model.DomainError{}) {
 		answerUnprocessableEntity(context, err)
 		return
 	}
@@ -38,8 +38,8 @@ func answerUnprocessableEntity(context *gin.Context, err error) {
 	var errorsJson ErrorsArrayJsonResponse
 
 	switch errorType := err.(type) {
-	case domain_error.DomainError:
-		errorsJson = buildDomainErrorsResponseBody([]domain_error.DomainError{errorType})
+	case model.DomainError:
+		errorsJson = buildDomainErrorsResponseBody([]model.DomainError{errorType})
 	case interface{ Unwrap() []error }:
 		domainErrors := castToDomainErrors(errorType.Unwrap())
 		errorsJson = buildDomainErrorsResponseBody(domainErrors)
@@ -54,10 +54,10 @@ func answerUnprocessableEntity(context *gin.Context, err error) {
 	context.JSON(http.StatusUnprocessableEntity, errorsJson)
 }
 
-func castToDomainErrors(errors []error) []domain_error.DomainError {
-	var domainErrors []domain_error.DomainError
+func castToDomainErrors(errors []error) []model.DomainError {
+	var domainErrors []model.DomainError
 	for _, err := range errors {
-		if domainError, is := err.(domain_error.DomainError); is {
+		if domainError, is := err.(model.DomainError); is {
 			domainErrors = append(domainErrors, domainError)
 		} else {
 			log.Error().Str("level", "ui").
@@ -68,7 +68,7 @@ func castToDomainErrors(errors []error) []domain_error.DomainError {
 	return domainErrors
 }
 
-func buildDomainErrorsResponseBody(errs []domain_error.DomainError) ErrorsArrayJsonResponse {
+func buildDomainErrorsResponseBody(errs []model.DomainError) ErrorsArrayJsonResponse {
 	jsonErrors := make([]ErrorJsonResponse, len(errs))
 	for i, v := range errs {
 		field := v.Field()

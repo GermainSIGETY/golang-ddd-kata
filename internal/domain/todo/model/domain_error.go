@@ -1,4 +1,4 @@
-package domain_error
+package model
 
 import (
 	"errors"

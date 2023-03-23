@@ -46,7 +46,7 @@ But it could be many others responsibilities ; sending email, SMS, push notifica
 - ... then send requests to domain…
 - ... and receives responses from domain and send back responses (serialization)
 
-> :warning: **no validations of any fields of requests. Not any business rule !
+> :warning: No validations of any fields of requests. Not any business rule !
 
 => this part should be as thin as possible, interchangeable without side effect for domain
 
