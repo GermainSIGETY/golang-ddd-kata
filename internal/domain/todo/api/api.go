@@ -2,10 +2,10 @@ package api
 
 import (
 	"errors"
-	"fmt"
 	"github.com/GermainSIGETY/golang-ddd-kata/internal/domain/todo/model"
 	"github.com/GermainSIGETY/golang-ddd-kata/internal/domain/todo/port"
-	"github.com/GermainSIGETY/golang-ddd-kata/internal/domain/validators"
+	"github.com/GermainSIGETY/golang-ddd-kata/internal/domain/todo/validators"
+	"github.com/rs/zerolog/log"
 )
 
 const (
@@ -35,7 +35,7 @@ func (api TodosAPI) CreateTodo(request port.CreationRequest) (int, error) {
 func (api TodosAPI) ReadTodo(ID int) (model.ReadTodoResponse, error) {
 	todo, err := api.todosRepository.ReadTodo(ID)
 	if err != nil {
-		fmt.Printf("ERROR : %v", err)
+		log.Err(err).Msg("")
 		return model.ReadTodoResponse{}, err
 	} else if todo == (model.Todo{}) {
 		return model.ReadTodoResponse{}, errors.New(NotFoundErrorMessage)
@@ -50,7 +50,7 @@ func (api TodosAPI) UpdateTodo(request port.UpdateRequest) error {
 
 	todo, errRead := api.todosRepository.ReadTodo(request.Id())
 	if errRead != nil {
-		fmt.Printf("ERROR : %v", errRead)
+		log.Err(errRead).Msg("")
 		return errRead
 	}
 
@@ -61,7 +61,7 @@ func (api TodosAPI) UpdateTodo(request port.UpdateRequest) error {
 
 	UpdateFromTodoUpdateRequest(&todo, request)
 	if errUpdate := api.todosRepository.UpdateTodo(todo); errUpdate != nil {
-		fmt.Printf("ERROR : %v", errRead)
+		log.Err(errUpdate).Msg("")
 		return errUpdate
 	}
 	return nil
@@ -84,7 +84,7 @@ func handleDeleteError(err error) error {
 		domainError := model.NewDomainError(model.IDField, validators.InvalidTodoIdCode, validators.InvalidTodoIdDescription)
 		return domainError
 	} else {
-		fmt.Printf("ERROR : %v", err)
+		log.Err(err).Msg("")
 		return err
 	}
 }

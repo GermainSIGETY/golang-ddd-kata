@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/GermainSIGETY/golang-ddd-kata/internal/domain/todo/model"
-	"github.com/GermainSIGETY/golang-ddd-kata/internal/domain/validators"
+	"github.com/GermainSIGETY/golang-ddd-kata/internal/domain/todo/validators"
 	"github.com/stretchr/testify/assert"
 )
 

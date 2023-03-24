@@ -5,7 +5,7 @@ import (
 
 	"github.com/GermainSIGETY/golang-ddd-kata/internal/domain/todo/model"
 	"github.com/GermainSIGETY/golang-ddd-kata/internal/domain/todo/port"
-	"github.com/GermainSIGETY/golang-ddd-kata/internal/domain/validators"
+	"github.com/GermainSIGETY/golang-ddd-kata/internal/domain/todo/validators"
 )
 
 func UpdateFromTodoUpdateRequest(t *model.Todo, request port.UpdateRequest) {

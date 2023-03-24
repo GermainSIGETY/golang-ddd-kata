@@ -1,7 +1,7 @@
 package ui
 
 import (
-	"fmt"
+	"github.com/rs/zerolog/log"
 	"net/http"
 
 	"github.com/GermainSIGETY/golang-ddd-kata/internal/domain/todo/api"
@@ -48,9 +48,9 @@ type TodoCreationJSONResponse struct {
 // @Router /todos [post]
 func handleCreate(context *gin.Context, api api.TodosAPI) {
 	var jsonRequest todoCreationJSONRequest
-	if errs := context.ShouldBindJSON(&jsonRequest); errs != nil {
-		fmt.Print(errs)
-		answerError400(context, "unable to parse TODO Creation JSON body")
+	if err := context.ShouldBindJSON(&jsonRequest); err != nil {
+		log.Warn().Err(err).Msg("")
+		answerError400(context, err)
 		return
 	}
 

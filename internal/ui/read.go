@@ -30,7 +30,7 @@ type TodoReadJSONResponse struct {
 func handleReadTodo(context *gin.Context, IDAsString string, api api.TodosAPI) {
 	ID, err := strconv.Atoi(IDAsString)
 	if err != nil {
-		answerError400(context, "todo ID in path must be an integer")
+		answerError400(context, err)
 		return
 	}
 	response, error := api.ReadTodo(ID)

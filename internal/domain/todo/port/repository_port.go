@@ -12,4 +12,5 @@ type ITodosRepository interface {
 	Create(todo model.Todo) (int, error)
 	UpdateTodo(todo model.Todo) error
 	DeleteTodo(id int) error
+	EmptyDatabaseForTests()
 }

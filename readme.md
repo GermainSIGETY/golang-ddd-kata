@@ -59,6 +59,12 @@ But it could be many others responsibilities ; sending email, SMS, push notifica
 
 **dependencies** : domain, infrastructure and ui
 
+### internal/e2e
+
+Some fancy End-to-End tests written with Cucumber/Gherkin language, powered by godog:
+the whole application is launched and tested.
+For the sake of your continuous, relentless, perpetual and incremental delivery without regression.
+
 ## Build, run, automated tests
 
 ### build

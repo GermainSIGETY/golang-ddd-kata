@@ -1,7 +1,7 @@
 package ui
 
 import (
-	"fmt"
+	"github.com/rs/zerolog/log"
 	"net/http"
 	"strconv"
 
@@ -51,14 +51,14 @@ func (t todoUpdateJSONRequest) DueDate() int64 {
 func handleUpdate(context *gin.Context, IDAsString string, api api.TodosAPI) {
 	id, err := strconv.Atoi(IDAsString)
 	if err != nil {
-		answerError400(context, "todo ID in path must be an integer")
+		answerError400(context, err)
 		return
 	}
 
 	var jsonRequest todoUpdateJSONRequest
-	if errs := context.ShouldBindJSON(&jsonRequest); errs != nil {
-		fmt.Print(errs)
-		answerError400(context, "unable to parse TODO update JSON body")
+	if err := context.ShouldBindJSON(&jsonRequest); err != nil {
+		log.Err(err).Msg("")
+		answerError400(context, err)
 		return
 	}
 

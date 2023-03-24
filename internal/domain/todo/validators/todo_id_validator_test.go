@@ -6,7 +6,7 @@ import (
 )
 
 func TestTodoIDCorrect(t *testing.T) {
-	var ID int = 1
+	ID := 1
 	err := ValidateTodoId(ID)
 	assert.Empty(t, err)
 }

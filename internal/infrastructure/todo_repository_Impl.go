@@ -20,7 +20,7 @@ const (
 func NewTodosRepository(URL string, drop bool) (port.ITodosRepository, error) {
 	rep := todosRepository{}
 	err := rep.InitDatabase(URL, drop)
-	return rep, err
+	return &rep, err
 }
 
 func (repository *todosRepository) InitDatabase(URL string, drop bool) error {
@@ -41,7 +41,7 @@ func (repository *todosRepository) InitDatabase(URL string, drop bool) error {
 	return nil
 }
 
-func (repository todosRepository) ReadTodoList() ([]model.ISummaryResponse, error) {
+func (repository *todosRepository) ReadTodoList() ([]model.ISummaryResponse, error) {
 	var todos []todoGORM
 	err := repository.db.Select("ID, title, due_date").Find(&todos).Error
 	if err != nil {
@@ -58,7 +58,7 @@ func mapToTodoSummaryResponse(todos []todoGORM) []model.ISummaryResponse {
 	return summaries
 }
 
-func (repository todosRepository) ReadTodo(ID int) (model.Todo, error) {
+func (repository *todosRepository) ReadTodo(ID int) (model.Todo, error) {
 	var todoGORM todoGORM
 	err := repository.db.First(&todoGORM, ID).Error
 	if err != nil {
@@ -75,7 +75,7 @@ func handleReadError(err error) (model.Todo, error) {
 	return todo, err
 }
 
-func (repository todosRepository) Create(todo model.Todo) (int, error) {
+func (repository *todosRepository) Create(todo model.Todo) (int, error) {
 	var todoGORM = FromTodo(todo)
 	db := repository.db.Create(&todoGORM)
 	if db.Error != nil {
@@ -84,7 +84,7 @@ func (repository todosRepository) Create(todo model.Todo) (int, error) {
 	return todoGORM.ID, nil
 }
 
-func (repository todosRepository) UpdateTodo(todo model.Todo) error {
+func (repository *todosRepository) UpdateTodo(todo model.Todo) error {
 	var todoGORM = FromTodo(todo)
 	db := repository.db.Save(&todoGORM)
 	if db.Error != nil {
@@ -93,7 +93,7 @@ func (repository todosRepository) UpdateTodo(todo model.Todo) error {
 	return nil
 }
 
-func (repository todosRepository) DeleteTodo(id int) error {
+func (repository *todosRepository) DeleteTodo(id int) error {
 	todoGORM := todoGORM{ID: id}
 	db := repository.db.Delete(&todoGORM)
 	switch {
@@ -104,4 +104,8 @@ func (repository todosRepository) DeleteTodo(id int) error {
 	default:
 		return nil
 	}
+}
+
+func (repository *todosRepository) EmptyDatabaseForTests() {
+	repository.db.Exec("DELETE FROM Todo")
 }

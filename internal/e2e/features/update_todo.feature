@@ -1,15 +1,68 @@
 Feature: When user update a Todo, Todo is saved
 
   Background:
-    Given a Todo with title "Go on Holidays", a description "without smartphone" and a due date "2020-08-04"
+    Given a Todo with ID 14, title "Go on Holidays", a description "without smartphone", a creation date "2023-04-29" and a due date "2024-08-04"
 
   Scenario: user updates and reads Todo
-    When User updates previously created Todo with title "Go on Holidays in september", description "without laptop" and due date "2020-09-04"
-    Then application answers with status code 204
-    Then User read previously created Todo
-    And application answers with status code 200
-    And title is "Go on Holidays in september", description is "without laptop" and a due date is "2020-09-04"
+    When I send a "PUT" request to "/todos/14" with JSON:
+    """
+    {
+        "title": "Go on Holidays in september",
+        "description": "without laptop",
+        "dueDate": 1693591248
+    }
+    """
+    And the response code should be 204
+    And I send a "GET" request to "/todos/14"
+    Then the response code should be 200
+    And the response should match json:
+      """
+      {
+        "creationDate": 1682726400,
+        "description": "without laptop",
+        "dueDate": 1693591248,
+        "id": 14,
+        "title": "Go on Holidays in september"
+      }
+      """
 
-  Scenario: user updates non Existent Todo
-    When User updates todo with ID 123432
-    Then application answers with status code 422
+  Scenario: user updates a non existing Todo
+    When I send a "PUT" request to "/todos/400000" with JSON:
+    """
+    {
+        "title": "Go on Holidays in september",
+        "description": "without laptop",
+        "dueDate": 1693591248
+    }
+    """
+    And the response code should be 422
+    And the response should match json:
+      """
+      {
+        "errors": [
+          {
+            "code": "INVALID_TODO_ID",
+            "field": "id",
+            "message": "no existing todo with this id"
+          }
+        ]
+      }
+      """
+
+  Scenario: user updates a Todo with malformed Json
+    When I send a "PUT" request to "/todos/400000" with JSON:
+    """
+    {badJson}
+    """
+    And the response code should be 400
+    And the response should match json:
+      """
+      {
+        "errors": [
+          {
+            "code": "BAD_REQUEST",
+            "message": "invalid character 'b' looking for beginning of object key string"
+          }
+        ]
+      }
+      """

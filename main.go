@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/GermainSIGETY/golang-ddd-kata/internal/bootstrap"
+	"github.com/rs/zerolog/log"
 )
 
 // @title Get Things Done Todos Rest API
@@ -13,7 +14,10 @@ import (
 // @license.name Apache 2.0
 // @license.url http://www.apache.org/licenses/LICENSE-2.0.html
 
-// @host localhost
+// @host staging.todo-company.co.uk
 func main() {
-	bootstrap.LaunchApp()
+	router := bootstrap.InitApp()
+	if errRun := router.Run(); errRun != nil {
+		log.Fatal().Err(errRun).Msg("Error during service instantiation")
+	}
 }

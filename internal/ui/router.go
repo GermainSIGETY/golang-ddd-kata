@@ -5,7 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func NewRouter(api api.TodosAPI) {
+func NewRouter(api api.TodosAPI) *gin.Engine {
 
 	r := gin.Default()
 
@@ -31,5 +31,5 @@ func NewRouter(api api.TodosAPI) {
 		ID := c.Param("id")
 		handleDelete(c, ID, api)
 	})
-	r.Run()
+	return r
 }
