@@ -109,3 +109,12 @@ func (repository *todosRepository) DeleteTodo(id int) error {
 func (repository *todosRepository) EmptyDatabaseForTests() {
 	repository.db.Exec("DELETE FROM Todo")
 }
+
+func (repository todosRepository) ReadTodosIdsToNotify() ([]int, error) {
+	var todosId []int
+	err := repository.db.Model(&todoGORM{}).Where("notificationSent", false).Pluck("ID", &todosId).Error
+	if err != nil {
+		return nil, err
+	}
+	return todosId, nil
+}

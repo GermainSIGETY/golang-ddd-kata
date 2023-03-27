@@ -10,18 +10,21 @@ type Todo struct {
 	ID int
 
 	// Others fields must be sort alphabetically to easily find a field, when we read the code
-	CreationDate time.Time
-	Description  string
-	DueDate      time.Time
-	Title        string
+	CreationDate     time.Time
+	Description      string
+	DueDate          time.Time
+	Title            string
+	Assignee         string
+	NotificationSent bool
 }
 
 // MapToTodoResponse is currently overkill because it is strictly identical than Todo Entity
 // but if an entity has:
-//	- kind of internal field
-//  - fields in another format than ui (ui has more ready to serve formats)
+//   - kind of internal field
+//   - fields in another format than ui (ui has more ready to serve formats)
+//
 // we should need theses 'responses' struct in order to have a 'struct contract' used by ui, independent from domain (aka shock absorber pattern)
-func (t Todo) MapToTodoResponse() ReadTodoResponse {
+func (t *Todo) MapToTodoResponse() ReadTodoResponse {
 	if t.ID == 0 {
 		return ReadTodoResponse{}
 	}
@@ -31,5 +34,10 @@ func (t Todo) MapToTodoResponse() ReadTodoResponse {
 		Description:  t.Description,
 		CreationDate: t.CreationDate,
 		DueDate:      t.DueDate,
+		Assignee:     t.Assignee,
 	}
+}
+
+func (t *Todo) MarkAsNotificationSent() {
+	t.NotificationSent = true
 }

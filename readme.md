@@ -1,7 +1,46 @@
 # Domain Driven Design Kata In Golang
 > A To-Do list application to Get Things Done
 
-## Presentation     
+## kata #3: Notification to an external system with fault tolerance and Eventual Consistency
+
+Objectives of the Kata is to enhance our Todos APIs :
+- Add an 'assignee' field at each Todo
+- At each todo creation, we have to use an external notification service in order to notify the assignee that he has a task todo.
+
+### Constraints are :
+> **Notification are performed by email**
+> #### Todo Application should be fault-tolerant :
+> Notification failure should not block creation of Todos. if email service is down, it is still possible for users to create todos, and without extra latency
+> #### Notification feature should be eventually consistent : 
+> If email service is temporarily down, application would retry to send notification till email service is available.
+
+### Article for Kata #3
+Please read #FIXME
+
+### Mailgun Configuration
+We use mailgun Saas to send notification by email. Please read configuration procedure below to configure it : 
+
+[mailgun-config.md](./mailgun-config.md)
+
+### Usage : create a Todo with an assignee in order to trigger an email notification
+
+```
+curl --location --request POST 'http://localhost:8080/todos' --header 'Content-Type: application/json' -d '{
+"title": "Plant a tree",
+"dueDate": 1557847007,
+"description" : "because green is pleasing",
+"assignee": "totoro@ghibli.studio"
+}'
+```
+... put an email address that is defined as 'Authorized recipient' in Mailgun
+
+### Test automation : End-to-end tests with mocked notification Service
+
+End-to-end tests do not perform real notifications, in order to avoid dependency to an external system (see [Kata #2 test automation](https://medium.com/@gsigety/domain-driven-design-golang-kata-2-automatic-tests-bc3a97a63f88))
+For that tests use a mocked notification_sender in port package.
+It consists of a dummy mock used to count and check calls to Notification service during end-to-end tests : [notification_sender_mock.go](./internal/domain/todo/port/notification_sender_mock.go)
+
+## Presentation : Kata #1    
 A simple Rest API for a Todo list management, developed with Golang.
 Project applies DDD concepts :
 - hexagonal architecture

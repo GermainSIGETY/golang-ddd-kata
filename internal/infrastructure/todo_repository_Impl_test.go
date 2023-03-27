@@ -17,7 +17,8 @@ var (
 	toCreateAndReadTitle         = "your repo is funky"
 	toCreateAndReadDescription   = "your repo grooves"
 	toCreateAndUpdateTitle       = "your repo is fit"
-	toCreateAndUpdateDescription = "your repo strength"
+	toCreateAndUpdateDescription = "your repo is strength"
+	toCreateAndUpdateAssignee    = "the intern"
 )
 
 var toCreateCreationDate = time.Date(2015, 9, 7, 12, 30, 0, 0, time.UTC)
@@ -28,6 +29,7 @@ type updateRequestForTest struct {
 	title       string
 	description string
 	dueDate     int64
+	assignee    string
 }
 
 func (t updateRequestForTest) Id() int {
@@ -44,6 +46,10 @@ func (t updateRequestForTest) Description() string {
 
 func (t updateRequestForTest) DueDate() int64 {
 	return t.dueDate
+}
+
+func (t updateRequestForTest) Assignee() string {
+	return t.assignee
 }
 
 type InfraTestSuite struct {
@@ -71,6 +77,7 @@ func (suite *InfraTestSuite) TestCreate() {
 		Description:  toCreateDescription,
 		DueDate:      toCreateDueDate,
 		Title:        toCreateTitle,
+		Assignee:     toCreateAndUpdateAssignee,
 	}
 	id, err := suite.repo.Create(toCreate)
 	suite.NoError(err, "error creating Todo")
@@ -142,14 +149,17 @@ func (suite *InfraTestSuite) TestCreateAndUpdate() {
 	readTodo, errRead := suite.repo.ReadTodo(createdId)
 	suite.NoError(errRead, "error creating Todo")
 	suite.Equal(createdId, readTodo.ID)
+	suite.False(readTodo.NotificationSent)
 
 	newTitle := "my test is fat"
 	newDescription := "my test is in the ghetto"
 	newDueDate := dueDate.Add(time.Hour * 48)
 	newDueDateAsInt := newDueDate.Unix()
 
-	updateRequest := updateRequestForTest{createdId, newTitle, newDescription, newDueDateAsInt}
+	updateRequest := updateRequestForTest{createdId, newTitle, newDescription, newDueDateAsInt, assignee}
 	api.UpdateFromTodoUpdateRequest(&readTodo, updateRequest)
+
+	readTodo.MarkAsNotificationSent()
 
 	errUpdate := suite.repo.UpdateTodo(readTodo)
 	suite.NoError(errUpdate, "error updating todo")
@@ -162,6 +172,7 @@ func (suite *InfraTestSuite) TestCreateAndUpdate() {
 	suite.Equal(newDescription, updatedTodo.Description)
 	suite.Equal(toCreateCreationDate, updatedTodo.CreationDate)
 	suite.True(newDueDate.Equal(updatedTodo.DueDate))
+	suite.True(updatedTodo.NotificationSent)
 }
 
 func (suite *InfraTestSuite) TestReadSummaries() {
@@ -252,4 +263,39 @@ func (suite *InfraTestSuite) TestDeleteWrongId() {
 // a normal test function and pass our suite to suite.Run
 func TestInfraTestSuite(t *testing.T) {
 	suite.Run(t, new(InfraTestSuite))
+}
+
+func (suite *InfraTestSuite) TestReadTodosIdToNotify() {
+
+	suite.repo.db.Where("1 = 1").Delete(&todoGORM{})
+
+	toCreate := model.Todo{
+		ID: 0,
+
+		CreationDate: toCreateCreationDate,
+		Description:  toCreateAndUpdateDescription,
+		DueDate:      toCreateDueDate,
+		Title:        toCreateAndUpdateTitle,
+	}
+	id1, err := suite.repo.Create(toCreate)
+	suite.NoError(err, "error creating Todo")
+
+	descr2 := "2"
+	toCreate2 := model.Todo{
+		ID: 0,
+
+		CreationDate:     toCreateCreationDate,
+		Description:      descr2,
+		DueDate:          toCreateDueDate,
+		Title:            toCreateAndUpdateTitle,
+		NotificationSent: true,
+	}
+	_, error2 := suite.repo.Create(toCreate2)
+	suite.NoError(error2, "error creating Todo")
+
+	ids, errRead := suite.repo.ReadTodosIdsToNotify()
+	suite.NoError(errRead, "error reading todo list summaries")
+	suite.Equal(1, len(ids))
+
+	suite.Equal(id1, ids[0])
 }

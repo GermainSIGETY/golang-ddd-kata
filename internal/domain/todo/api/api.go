@@ -13,11 +13,12 @@ const (
 )
 
 type TodosAPI struct {
-	todosRepository port.ITodosRepository
+	todosRepository     port.ITodosRepository
+	notificationChannel chan<- int
 }
 
-func NewApi(repository port.ITodosRepository) TodosAPI {
-	return TodosAPI{repository}
+func NewApi(repository port.ITodosRepository, notificationChannel chan<- int) TodosAPI {
+	return TodosAPI{repository, notificationChannel}
 }
 
 func (api TodosAPI) CreateTodo(request port.CreationRequest) (int, error) {
@@ -29,6 +30,8 @@ func (api TodosAPI) CreateTodo(request port.CreationRequest) (int, error) {
 	if creationError != nil {
 		return 0, creationError
 	}
+	// send id to notification channel : a notification will be (eventually) sent
+	api.notificationChannel <- createdId
 	return createdId, nil
 }
 

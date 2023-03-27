@@ -18,6 +18,7 @@ type todoUpdateJSONRequest struct {
 	TitleJson       string `json:"title"`
 	DescriptionJson string `json:"description"`
 	DueDateJson     int64  `json:"dueDate"`
+	AssigneeJson    string `json:"assignee"`
 }
 
 func (t todoUpdateJSONRequest) Id() int {
@@ -34,6 +35,10 @@ func (t todoUpdateJSONRequest) Description() string {
 
 func (t todoUpdateJSONRequest) DueDate() int64 {
 	return t.DueDateJson
+}
+
+func (t todoUpdateJSONRequest) Assignee() string {
+	return t.AssigneeJson
 }
 
 // HandleUpdate godoc

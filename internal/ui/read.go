@@ -14,6 +14,7 @@ type TodoReadJSONResponse struct {
 	Description  string `json:"description,omitempty"`
 	CreationDate int64  `json:"creationDate"`
 	DueDate      int64  `json:"dueDate"`
+	Assignee     string `json:"assignee,omitempty"`
 }
 
 // HandleReadTodo godoc
@@ -38,6 +39,7 @@ func handleReadTodo(context *gin.Context, IDAsString string, api api.TodosAPI) {
 		answerError(context, error)
 		return
 	}
-	jsonResponse := TodoReadJSONResponse{response.ID, response.Title, response.Description, response.CreationDate.Unix(), response.DueDate.Unix()}
+	jsonResponse := TodoReadJSONResponse{response.ID, response.Title, response.Description,
+		response.CreationDate.Unix(), response.DueDate.Unix(), response.Assignee}
 	context.JSON(http.StatusOK, jsonResponse)
 }

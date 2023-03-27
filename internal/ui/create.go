@@ -16,6 +16,7 @@ type todoCreationJSONRequest struct {
 	TitleJson       string `json:"title"`
 	DescriptionJson string `json:"description"`
 	DueDateJson     int64  `json:"dueDate"`
+	AssigneeJson    string `json:"assignee"`
 }
 
 func (t todoCreationJSONRequest) Title() string {
@@ -28,6 +29,10 @@ func (t todoCreationJSONRequest) Description() string {
 
 func (t todoCreationJSONRequest) DueDate() int64 {
 	return t.DueDateJson
+}
+
+func (t todoCreationJSONRequest) Assignee() string {
+	return t.AssigneeJson
 }
 
 type TodoCreationJSONResponse struct {

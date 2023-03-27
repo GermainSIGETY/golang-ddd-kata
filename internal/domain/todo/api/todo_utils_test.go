@@ -21,6 +21,7 @@ type creationRequestForTest struct {
 	title       string
 	description string
 	dueDate     int64
+	assignee    string
 }
 
 func (t creationRequestForTest) Title() string {
@@ -31,6 +32,10 @@ func (t creationRequestForTest) Description() string {
 }
 func (t creationRequestForTest) DueDate() int64 {
 	return t.dueDate
+}
+
+func (t creationRequestForTest) Assignee() string {
+	return t.assignee
 }
 
 func Test_Creation(t *testing.T) {
@@ -115,6 +120,7 @@ type updateRequestForTest struct {
 	title       string
 	description string
 	dueDate     int64
+	assignee    string
 }
 
 func (t updateRequestForTest) Id() int {
@@ -131,6 +137,10 @@ func (t updateRequestForTest) Description() string {
 
 func (t updateRequestForTest) DueDate() int64 {
 	return t.dueDate
+}
+
+func (t updateRequestForTest) Assignee() string {
+	return t.assignee
 }
 
 func Test_Update(t *testing.T) {

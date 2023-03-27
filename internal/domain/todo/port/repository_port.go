@@ -13,4 +13,5 @@ type ITodosRepository interface {
 	UpdateTodo(todo model.Todo) error
 	DeleteTodo(id int) error
 	EmptyDatabaseForTests()
+	ReadTodosIdsToNotify() ([]int, error)
 }

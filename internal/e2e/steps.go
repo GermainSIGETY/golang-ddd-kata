@@ -1,6 +1,7 @@
 package e2e
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"github.com/GermainSIGETY/golang-ddd-kata/internal/bootstrap"
@@ -11,6 +12,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"net/http"
 	"net/http/httptest"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -20,19 +22,28 @@ const (
 )
 
 var (
-	router     *gin.Engine
-	repository port.ITodosRepository
-	resp       *httptest.ResponseRecorder
+	router                   *gin.Engine
+	repository               port.ITodosRepository
+	resp                     *httptest.ResponseRecorder
+	mockedNotificationSender *port.NotificationSenderMock
 )
 
 func initApp() {
-	router, repository = bootstrap.InitAppForIntegrationTest()
+
+	mockedNotificationSender = &port.NotificationSenderMock{}
+	router, repository = bootstrap.InitAppForIntegrationTest(mockedNotificationSender)
 	log.Info().Msg("app init")
 }
 
 func InitializeTestSuite(ctx *godog.TestSuiteContext) {
 	fmt.Println("Before test suite")
 	ctx.BeforeSuite(initApp)
+	ctx.ScenarioContext().Before(beforeScenario)
+}
+
+func beforeScenario(ctx context.Context, sc *godog.Scenario) (context.Context, error) {
+	mockedNotificationSender.ResetCallsCounter()
+	return ctx, nil
 }
 
 func InitializeScenario(ctx *godog.ScenarioContext) {
@@ -41,10 +52,13 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 
 	ctx.Step(`^an empty Database$`, anEmptyDatabase)
 	ctx.Step(`^a Todo with ID (\d+), title "([^"]*)", a description "([^"]*)", a creation date "([^"]*)" and a due date "([^"]*)"$`, aTodoWithTitleADescriptionAndADueDate)
+	ctx.Step(`^a Todo with ID (\d+), title "([^"]*)", a creation date "([^"]*)", an assignee "([^"]*)" and notified flag to "([^"]*)"$`, aTodoWithTitleAssigneeAndFlag)
 	ctx.Step(`^I send a "([^"]*)" request to "([^"]*)"$`, iSendARequestTo)
 	ctx.Step(`^I send a "([^"]*)" request to "([^"]*)" with JSON:$`, iSendARequestToWithJSON)
 	ctx.Step(`^the response code should be (\d+)$`, theResponseCodeShouldBe)
 	ctx.Step(`^the response should match json:$`, theResponseShouldMatchJSON)
+	ctx.Step(`^NotificationService is called (\d+) times after (\d+) ms$`, notificationServiceIsCalled)
+
 }
 
 func anEmptyDatabase() {
@@ -55,11 +69,27 @@ func aTodoWithTitleADescriptionAndADueDate(todoID int, title, description string
 	creationDateInt64, _ := stringToDate(creationDate)
 	dueDateInt64, _ := stringToDate(dueDate)
 	return repository.UpdateTodo(model.Todo{
-		ID:           todoID,
-		CreationDate: time.Unix(creationDateInt64, 0),
-		Description:  description,
-		DueDate:      time.Unix(dueDateInt64, 0),
-		Title:        title,
+		ID:               todoID,
+		CreationDate:     time.Unix(creationDateInt64, 0),
+		Description:      description,
+		DueDate:          time.Unix(dueDateInt64, 0),
+		Title:            title,
+		NotificationSent: true,
+	})
+}
+
+func aTodoWithTitleAssigneeAndFlag(todoID int, title, creationDate string, assignee string, notifiedFlag string) (err error) {
+	creationDateInt64, _ := stringToDate(creationDate)
+	notifiedFlagBool, err := strconv.ParseBool(notifiedFlag)
+	if err != nil {
+		return err
+	}
+	return repository.UpdateTodo(model.Todo{
+		ID:               todoID,
+		Title:            title,
+		CreationDate:     time.Unix(creationDateInt64, 0),
+		Assignee:         assignee,
+		NotificationSent: notifiedFlagBool,
 	})
 }
 
@@ -135,4 +165,13 @@ func stringToDate(date string) (int64, error) {
 	t, err := time.Parse(layoutISO, date)
 	dueDate := t.Unix()
 	return dueDate, err
+}
+
+func notificationServiceIsCalled(awaitedCalls int, timeToWait int) error {
+	//dummy wait in order to wait message in channel to be received
+	time.Sleep(time.Millisecond * time.Duration(timeToWait))
+	if awaitedCalls != mockedNotificationSender.Calls {
+		return fmt.Errorf("expected calls to notificationService: %d, but actual is: %d", awaitedCalls, mockedNotificationSender.Calls)
+	}
+	return nil
 }

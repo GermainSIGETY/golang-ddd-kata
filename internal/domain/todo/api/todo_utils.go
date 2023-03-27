@@ -24,6 +24,7 @@ func FromTodoCreationRequest(request port.CreationRequest) (model.Todo, []model.
 		Description:  request.Description(),
 		CreationDate: time.Now(),
 		DueDate:      time.Unix(request.DueDate(), 0),
+		Assignee:     request.Assignee(),
 	}, nil
 }
 

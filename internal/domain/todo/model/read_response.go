@@ -8,4 +8,5 @@ type ReadTodoResponse struct {
 	Description  string
 	CreationDate time.Time
 	DueDate      time.Time
+	Assignee     string
 }
