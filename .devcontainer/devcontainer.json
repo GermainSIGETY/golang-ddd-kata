@@ -1,0 +1,16 @@
+{
+  "name": "app",
+  "dockerComposeFile": [
+    "../docker-compose.yml"
+  ],
+  "service": "app",
+  "workspaceFolder": "/workspace",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "actboy168.tasks",
+        "golang.go"
+      ]
+    }
+  }
+}
