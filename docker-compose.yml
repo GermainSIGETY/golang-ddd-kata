@@ -6,3 +6,6 @@ services:
     command: sleep infinity
     volumes:
       - .:/workspace
+    environment:
+      - PRODUCTION_HOST=${PRODUCTION_HOST}
+      - STAGING_HOST=${STAGING_HOST}

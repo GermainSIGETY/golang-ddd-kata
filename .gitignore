@@ -2,3 +2,6 @@
 *.iml
 GetThingsDone
 .env
+
+# swagger
+deployments/swagger
