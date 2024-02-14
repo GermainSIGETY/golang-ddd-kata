@@ -1,0 +1,14 @@
+{
+  "editor.detectIndentation": false,
+  "editor.formatOnPaste": true,
+  "editor.formatOnSave": true,
+  "editor.renderWhitespace": "all",
+  "editor.tabSize": 2,
+  "files.eol": "\n",
+  "files.insertFinalNewline": true,
+  "files.trimTrailingWhitespace": true,
+  "git.followTagsWhenSync": true,
+  "[markdown]": {
+    "files.trimTrailingWhitespace": false
+  },
+}

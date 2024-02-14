@@ -126,14 +126,14 @@ curl -X GET http://localhost:8080/todos
 ## Swagger / OpenAPI
 ### Install Swaggo / swag
 ```
-go get -u github.com/swaggo/swag/cmd/swag
+go install github.com/swaggo/swag/cmd/swag@latest
 ```
 ### Generate doc 
 ```
-make swagger
+make generate_swagger
 ```
 
-Doc is generated/updated into ./doc directtory
+Doc is generated/updated into ./deployments/swagger directory
 
 See https://github.com/swaggo/swag
 

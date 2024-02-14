@@ -14,7 +14,7 @@ import (
 // @license.name Apache 2.0
 // @license.url http://www.apache.org/licenses/LICENSE-2.0.html
 
-// @host staging.todo-company.co.uk
+// @host fake-host
 func main() {
 	router := bootstrap.InitApp()
 	if errRun := router.Run(); errRun != nil {

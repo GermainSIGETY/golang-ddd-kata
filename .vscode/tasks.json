@@ -1,0 +1,25 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "📝 Swagger",
+      "type": "shell",
+      "command": "make generate_swagger",
+    },
+    {
+      "label": "✅ Test",
+      "type": "shell",
+      "command": "make tests",
+    },
+    {
+      "label": "▶️ Run",
+      "type": "shell",
+      "command": "make run",
+    },
+    {
+      "label": "⏹ Stop",
+      "type": "shell",
+      "command": "pkill make",
+    },
+  ]
+}

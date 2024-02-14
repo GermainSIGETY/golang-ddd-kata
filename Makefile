@@ -28,11 +28,11 @@ tests-e2e :
 generate_swagger:
 	# 1. Génération des fichiers swagger
 	@swag init -o ./deployments/swagger
-	# 2. On créer le swagger de prod avec le host de prod
-	sed "s/$(STAGING_HOST)/$(PRODUCTION_HOST)/" ./deployments/swagger/swagger.json > ./deployments/swagger/production.swagger.json
-	# 3. On vire la clé d'API pour les environnements de staging puis on créer le staging avec les hosts correspondant
+	# 2. On crée le swagger de prod avec le host de prod
+	sed "s/fake-host/$(PRODUCTION_HOST)/" ./deployments/swagger/swagger.json > ./deployments/swagger/production.swagger.json
+	# 3. On vire la clé d'API pour les environnements de staging puis on crée le swagger de staging avec le host correspondant
 	sed -i '/^\s*\"security\": \[\s*/{N;N;N;N;d}' ./deployments/swagger/swagger.json
-	sed "s/$(STAGING_HOST)/$(STAGING_HOST)/" ./deployments/swagger/swagger.json > ./deployments/swagger/staging.swagger.json
+	sed "s/fake-host/$(STAGING_HOST)/" ./deployments/swagger/swagger.json > ./deployments/swagger/staging.swagger.json
 	# 4. On supprime les fichiers dont on n'a pas besoin
 	rm ./deployments/swagger/swagger.json
 	rm ./deployments/swagger/swagger.yaml

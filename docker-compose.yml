@@ -1,0 +1,11 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: .devcontainer/Dockerfile
+    command: sleep infinity
+    volumes:
+      - .:/workspace
+    environment:
+      - PRODUCTION_HOST=${PRODUCTION_HOST}
+      - STAGING_HOST=${STAGING_HOST}
